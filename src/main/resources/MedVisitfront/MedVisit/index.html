@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MedVisit - Управление визитами</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="logo"><img src="img/Med Vizit (1).png" alt="MedVisit Logo"> </div>
+            <nav>
+                <ul>
+                    <li><a href="#about"><i class="fas fa-info-circle"></i> <span data-ru="О нас" data-uz="Biz haqimizda">О нас</span></a></li>
+                    <li><a href="#doctors"><i class="fas fa-user-md"></i> <span data-ru="Врачи" data-uz="Shifokorlar">Врачи</span></a></li>
+                    <li><a href="#services"><i class="fas fa-stethoscope"></i> <span data-ru="Услуги" data-uz="Xizmatlar">Услуги</span></a></li>
+                    <li><a href="#contacts"><i class="fas fa-phone"></i> <span data-ru="Контакты" data-uz="Aloqa">Контакты</span></a></li>
+                    <li class="lang">
+                        <a href="#" class="lang-link active" data-lang="ru"><img src="https://flagcdn.com/16x12/ru.png" alt="Русский"> <span data-ru="Рус" data-uz="Rus">Рус</span></a>
+                        <a href="#" class="lang-link" data-lang="uz"><img src="https://flagcdn.com/16x12/uz.png" alt="Узбекский"> <span data-ru="Узб" data-uz="O'zb">Узб</span></a>
+                    </li>
+                    <li><a href="#login"><i class="fas fa-sign-in-alt"></i> <span data-ru="Вход" data-uz="Kirish">Вход</span></a></li>
+                    <li><a href="#profile"><i class="fas fa-user"></i> <span data-ru="Профиль" data-uz="Profil">Профиль</span></a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <section id="about" class="hero-section">
+            <div class="container">
+                <h1 data-ru="Добро пожаловать в MedVisit" data-uz="MedVisitga xush kelibsiz">Добро пожаловать в MedVisit</h1>
+                <p data-ru="Современная платформа для управления визитами в клиниках. Мы предоставляем удобный интерфейс для записи к врачам, широкий выбор квалифицированных специалистов, онлайн-консультации и круглосуточную поддержку. Ваше здоровье в надежных руках с MedVisit!" 
+                   data-uz="Klinikalardagi tashriflarni boshqarish uchun zamonaviy platforma. Biz shifokorlarga yozilish uchun qulay interfeys, malakali mutaxassislarning keng tanlovi, onlayn maslahatlar va 24/7 yordamni taqdim etamiz. MedVisit bilan sog'ligingiz ishonchli qo'llarda!">
+                   Современная платформа для управления визитами в клиниках. Мы предоставляем удобный интерфейс для записи к врачам, широкий выбор квалифицированных специалистов, онлайн-консультации и круглосуточную поддержку. Ваше здоровье в надежных руках с MedVisit!
+                </p>
+                <div class="pulse-circle"></div>
+            </div>
+        </section>
+
+        <section id="doctors" class="doctors-section">
+            <div class="container">
+                <h2 data-ru="Наши врачи" data-uz="Bizning shifokorlar">Наши врачи</h2>
+                <div class="doctors-list">
+                    <div class="doctor-card" data-doctor="1">
+                        <img src="img/doc1.jpg" alt="Иванов С.П.">
+                        <h3 data-ru="Иванов С.П." data-uz="Ivanov S.P.">Иванов С.П.</h3>
+                        <p data-ru="Терапевт" data-uz="Terapevt">Терапевт</p>
+                        <p class="additional-info" data-ru="Стаж: 15 лет" data-uz="Tajriba: 15 yil">Стаж: 15 лет</p>
+                        <p class="additional-info" data-ru="Клиника: Здоровье" data-uz="Klinika: Sog'liq">Клиника: Здоровье</p>
+                        <button class="details-btn" data-doctor="1" data-ru="Подробнее" data-uz="Batafsil">Подробнее</button>
+                    </div>
+                    <div class="doctor-card" data-doctor="2">
+                        <img src="img/doc2.webp" alt="Петрова А.И.">
+                        <h3 data-ru="Петрова А.И." data-uz="Petrova A.I.">Петрова А.И.</h3>
+                        <p data-ru="Кардиолог" data-uz="Kardiolog">Кардиолог</p>
+                        <p class="additional-info" data-ru="Стаж: 12 лет" data-uz="Tajriba: 12 yil">Стаж: 12 лет</p>
+                        <p class="additional-info" data-ru="Клиника: Сердце" data-uz="Klinika: Yurak">Клиника: Сердце</p>
+                        <button class="details-btn" data-doctor="2" data-ru="Подробнее" data-uz="Batafsil">Подробнее</button>
+                    </div>
+                    <div class="doctor-card" data-doctor="3">
+                        <img src="img/doc3.jpg" alt="Сидоров А.В.">
+                        <h3 data-ru="Сидоров А.В." data-uz="Sidorov A.V.">Сидоров А.В.</h3>
+                        <p data-ru="Невролог" data-uz="Nevrolog">Невролог</p>
+                        <p class="additional-info" data-ru="Стаж: 10 лет" data-uz="Tajriba: 10 yil">Стаж: 10 лет</p>
+                        <p class="additional-info" data-ru="Клиника: Нейрон" data-uz="Klinika: Neyron">Клиника: Нейрон</p>
+                        <button class="details-btn" data-doctor="3" data-ru="Подробнее" data-uz="Batafsil">Подробнее</button>
+                    </div>
+                    <div class="doctor-card" data-doctor="4">
+                        <img src="img/doc4.webp" alt="Кузнецова О.С.">
+                        <h3 data-ru="Кузнецова О.С." data-uz="Kuznetsova O.S.">Кузнецова О.С.</h3>
+                        <p data-ru="Педиатр" data-uz="Pediatr">Педиатр</p>
+                        <p class="additional-info" data-ru="Стаж: 8 лет" data-uz="Tajriba: 8 yil">Стаж: 8 лет</p>
+                        <p class="additional-info" data-ru="Клиника: Малыш" data-uz="Klinika: Bolajon">Клиника: Малыш</p>
+                        <button class="details-btn" data-doctor="4" data-ru="Подробнее" data-uz="Batafsil">Подробнее</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="services" class="services-section">
+            <div class="container">
+                <h2 data-ru="Наши услуги" data-uz="Bizning xizmatlar">Наши услуги</h2>
+                <div class="services-grid">
+                    <div class="service-item" data-ru="Консультации" data-uz="Maslahatlar"><i class="fas fa-user-md"></i> Консультации</div>
+                    <div class="service-item" data-ru="Диагностика" data-uz="Diagnostika"><i class="fas fa-x-ray"></i> Диагностика</div>
+                    <div class="service-item" data-ru="Лечение" data-uz="Davolash"><i class="fas fa-syringe"></i> Лечение</div>
+                    <div class="service-item" data-ru="Профилактика" data-uz="Profilaktika"><i class="fas fa-heartbeat"></i> Профилактика</div>
+                </div>
+            </div>
+        </section>
+
+        <section id="testimonials" class="testimonials-section">
+            <div class="container">
+                <h2 data-ru="Отзывы пациентов" data-uz="Bemorlarning fikrlari">Отзывы пациентов</h2>
+                <div class="testimonials-carousel">
+                    <div class="testimonial-box">
+                        <p data-ru="Отличный сервис, записалась за минуту!" data-uz="Ajoyib xizmat, bir daqiqada ro'yxatdan o'tdim!">Отличный сервис, записалась за минуту!</p>
+                        <span data-ru="Анна, 34 года" data-uz="Anna, 34 yosh">Анна, 34 года</span>
+                    </div>
+                    <div class="testimonial-box">
+                        <p data-ru="Врачи очень внимательные и профессиональные!" data-uz="Shifokorlar juda e'tiborli va professional!">Врачи очень внимательные и профессиональные!</p>
+                        <span data-ru="Игорь, 45 лет" data-uz="Igor, 45 yosh">Игорь, 45 лет</span>
+                    </div>
+                    <div class="testimonial-box">
+                        <p data-ru="Удобно и быстро, рекомендую всем!" data-uz="Qulay va tez, hammaga tavsiya qilaman!">Удобно и быстро, рекомендую всем!</p>
+                        <span data-ru="Ольга, 29 лет" data-uz="Olga, 29 yosh">Ольга, 29 лет</span>
+                    </div>
+                    <div class="testimonial-box">
+                        <p data-ru="Лучшая платформа для записи к врачам!" data-uz="Shifokorlarga yozilish uchun eng yaxshi platforma!">Лучшая платформа для записи к врачам!</p>
+                        <span data-ru="Алексей, 38 лет" data-uz="Aleksey, 38 yosh">Алексей, 38 лет</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="appointment" class="appointment-section">
+            <div class="container">
+                <h2 data-ru="Запишитесь на прием" data-uz="Qabulga yoziling">Запишитесь на прием</h2>
+                <button class="btn" data-ru="Записаться" data-uz="Yozilish">Записаться</button>
+                <p data-ru="Выберите врача и удобное время для визита!" data-uz="Shifokor va qulay vaqtni tanlang!">Выберите врача и удобное время для визита!</p>
+            </div>
+        </section>
+    </main>
+
+    <footer id="contacts">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3 data-ru="Контакты" data-uz="Aloqa">Контакты</h3>
+                    <p data-ru="Телефон: +7 (999) 123-45-67 / +998 (90) 123-45-67" data-uz="Telefon: +7 (999) 123-45-67 / +998 (90) 123-45-67">Телефон: +7 (999) 123-45-67 / +998 (90) 123-45-67</p>
+                    <p data-ru="Email: info@medvisit.com" data-uz="Email: info@medvisit.com">Email: info@medvisit.com</p>
+                </div>
+                <div class="footer-section">
+                    <h3 data-ru="Адрес" data-uz="Manzil">Адрес</h3>
+                    <p data-ru="г. Ташкент, ул. Здоровья, д. 10" data-uz="Toshkent sh., Sog'liq ko'chasi, 10-uy">г. Ташкент, ул. Здоровья, д. 10</p>
+                </div>
+                <div class="footer-section">
+                    <h3 data-ru="Соцсети" data-uz="Ijtimoiy tarmoqlar">Соцсети</h3>
+                    <p><a href="#" data-ru="Instagram" data-uz="Instagram">Instagram</a> | <a href="#" data-ru="VK" data-uz="VK">VK</a></p>
+                    <p data-ru="Телеграм-бот: @MedVisitBot" data-uz="Telegram-bot: @MedVisitBot">Телеграм-бот: @MedVisitBot</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Модальное окно -->
+    <div class="modal" id="doctor-modal">
+        <div class="modal-content">
+            <span class="close-btn">×</span>
+            <h3 id="modal-doctor-name"></h3>
+            <p id="modal-doctor-specialty"></p>
+            <p id="modal-doctor-experience"></p>
+            <p id="modal-doctor-clinic"></p>
+            <p id="modal-doctor-info"></p>
+            <button class="modal-btn" data-ru="Записаться на консультацию" data-uz="Konsultatsiyaga yozilish">Записаться на консультацию</button>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
