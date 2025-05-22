@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MedVisit - Вход</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background-color: #f0f7f4;
+            color: #333;
+            line-height: 1.6;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 400px;
+            margin: 20px;
+            padding: 20px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+
+        .logo {
+            margin-bottom: 20px;
+        }
+
+        .logo img {
+            width: 150px;
+            height: 50px;
+        }
+
+        h1 {
+            color: #4a9165;
+            font-size: 2em;
+            margin-bottom: 20px;
+        }
+
+        .login-form {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .login-form input {
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 1em;
+            outline: none;
+            transition: border-color 0.3s ease;
+        }
+
+        .login-form input:focus {
+            border-color: #88c9a1;
+        }
+
+        .login-form button {
+            background-color: #88c9a1;
+            color: white;
+            border: none;
+            padding: 10px;
+            border-radius: 5px;
+            font-size: 1.1em;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+        }
+
+        .login-form button:hover {
+            background-color: #6eb385;
+            transform: scale(1.05);
+        }
+
+        .error-message {
+            color: #e74c3c;
+            font-size: 0.9em;
+            margin-top: 10px;
+            display: none;
+        }
+
+        .lang {
+            margin-top: 20px;
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .lang a {
+            color: #4a9165;
+            text-decoration: none;
+            font-size: 1em;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .lang a.active {
+            color: #6eb385;
+            font-weight: bold;
+        }
+
+        .lang img {
+            vertical-align: middle;
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                max-width: 90%;
+            }
+
+            h1 {
+                font-size: 1.5em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container animate__animated animate__fadeIn">
+        <div class="logo">
+            <img src="img/Med Vizit (1).png" alt="MedVisit Logo">
+        </div>
+        <h1 data-ru="Вход в аккаунт" data-uz="Hisobga kirish">Вход в аккаунт</h1>
+        <div class="login-form">
+            <input type="text" id="username" placeholder="Логин" data-ru="Логин" data-uz="Login">
+            <input type="password" id="password" placeholder="Пароль" data-ru="Пароль" data-uz="Parol">
+            <button id="login-btn" data-ru="Войти" data-uz="Kirish">Войти</button>
+            <p class="error-message" id="error-message" data-ru="Неверный логин или пароль" data-uz="Noto'g'ri login yoki parol">Неверный логин или пароль</p>
+        </div>
+        <div class="lang">
+            <a href="#" class="lang-link active" data-lang="ru"><img src="https://flagcdn.com/16x12/ru.png" alt="Русский"> <span data-ru="Рус" data-uz="Rus">Рус</span></a>
+            <a href="#" class="lang-link" data-lang="uz"><img src="https://flagcdn.com/16x12/uz.png" alt="Узбекский"> <span data-ru="Узб" data-uz="O'zb">Узб</span></a>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            // Функция переключения языка
+            function updateLanguage(lang) {
+                $('[data-ru]').each(function() {
+                    let text = lang === 'ru' ? $(this).data('ru') : $(this).data('uz');
+                    if ($(this).is('h1, p, span, button')) {
+                        $(this).text(text);
+                    } else if ($(this).is('input')) {
+                        $(this).attr('placeholder', text);
+                    }
+                });
+                $('.lang-link').removeClass('active');
+                $(`.lang-link[data-lang="${lang}"]`).addClass('active');
+            }
+
+            // Инициализация языка по умолчанию
+            updateLanguage('ru');
+
+            // Обработчик переключения языка
+            $('.lang-link').click(function(e) {
+                e.preventDefault();
+                let lang = $(this).data('lang');
+                updateLanguage(lang);
+            });
+
+            // Обработка клика по кнопке логина
+            $('#login-btn').click(function() {
+                let username = $('#username').val();
+                let password = $('#password').val();
+                let lang = $('.lang-link.active').data('lang') || 'ru';
+
+                if (username === '' || password === '') {
+                    $('#error-message').fadeIn();
+                    setTimeout(() => {
+                        $('#error-message').fadeOut();
+                    }, 3000);
+                } else {
+                    // Здесь можно добавить логику отправки данных на сервер
+                    $(this).animate({ width: '150px' }, 300).text(lang === 'ru' ? 'Вход выполнен!' : 'Kirish amalga oshirildi!');
+                    setTimeout(() => {
+                        $(this).animate({ width: '100px' }, 300).text(lang === 'ru' ? 'Войти' : 'Kirish');
+                    }, 1500);
+                }
+            });
+        });
+    </script>
+</body>
+</html>
