@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MedVisit - Управление визитами</title>
+    <title>MedVisit - Healthcare Platform</title>
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
@@ -22,8 +22,8 @@
                         <a href="#" class="lang-link active" data-lang="ru"><img src="https://flagcdn.com/16x12/ru.png" alt="Русский"> <span data-ru="Рус" data-uz="Rus">Рус</span></a>
                         <a href="#" class="lang-link" data-lang="uz"><img src="https://flagcdn.com/16x12/uz.png" alt="Узбекский"> <span data-ru="Узб" data-uz="O'zb">Узб</span></a>
                     </li>
-                    <li><a href="login.html"><i class="fas fa-sign-in-alt"></i> <span data-ru="Вход" data-uz="Kirish">Вход</span></a></li>
-                    <li><a href="#profile"><i class="fas fa-user"></i> <span data-ru="Профиль" data-uz="Profil">Профиль</span></a></li>
+                    <li id="nav-login"><a href="login.html" class="nav-auth-btn"><i class="fas fa-sign-in-alt"></i> <span data-ru="Вход" data-uz="Kirish">Вход</span></a></li>
+                    <li id="nav-dashboard" style="display:none;"><a href="#" id="dashboard-link" class="nav-auth-btn"><i class="fas fa-user"></i> <span data-ru="Кабинет" data-uz="Kabinet">Кабинет</span></a></li>
                 </ul>
             </nav>
         </div>
@@ -33,10 +33,13 @@
         <section id="about" class="hero-section">
             <div class="container">
                 <h1 data-ru="Добро пожаловать в MedVisit" data-uz="MedVisitga xush kelibsiz">Добро пожаловать в MedVisit</h1>
-                <p data-ru="Современная платформа для управления визитами в клиниках. Мы предоставляем удобный интерфейс для записи к врачам, широкий выбор квалифицированных специалистов, онлайн-консультации и круглосуточную поддержку. Ваше здоровье в надежных руках с MedVisit!" 
+                <p data-ru="Современная платформа для управления визитами в клиниках. Мы предоставляем удобный интерфейс для записи к врачам, широкий выбор квалифицированных специалистов, онлайн-консультации и круглосуточную поддержку. Ваше здоровье в надежных руках с MedVisit!"
                    data-uz="Klinikalardagi tashriflarni boshqarish uchun zamonaviy platforma. Biz shifokorlarga yozilish uchun qulay interfeys, malakali mutaxassislarning keng tanlovi, onlayn maslahatlar va 24/7 yordamni taqdim etamiz. MedVisit bilan sog'ligingiz ishonchli qo'llarda!">
                    Современная платформа для управления визитами в клиниках. Мы предоставляем удобный интерфейс для записи к врачам, широкий выбор квалифицированных специалистов, онлайн-консультации и круглосуточную поддержку. Ваше здоровье в надежных руках с MedVisit!
                 </p>
+                <div style="margin-top: 30px;">
+                    <a href="login.html" class="btn" style="text-decoration:none;" data-ru="Записаться на прием" data-uz="Qabulga yozilish">Записаться на прием</a>
+                </div>
                 <div class="pulse-circle"></div>
             </div>
         </section>
@@ -44,39 +47,8 @@
         <section id="doctors" class="doctors-section">
             <div class="container">
                 <h2 data-ru="Наши врачи" data-uz="Bizning shifokorlar">Наши врачи</h2>
-                <div class="doctors-list">
-                    <div class="doctor-card" data-doctor="1">
-                        <img src="img/doc1.jpg" alt="Иванов С.П.">
-                        <h3 data-ru="Иванов С.П." data-uz="Ivanov S.P.">Иванов С.П.</h3>
-                        <p data-ru="Терапевт" data-uz="Terapevt">Терапевт</p>
-                        <p class="additional-info" data-ru="Стаж: 15 лет" data-uz="Tajriba: 15 yil">Стаж: 15 лет</p>
-                        <p class="additional-info" data-ru="Клиника: Здоровье" data-uz="Klinika: Sog'liq">Клиника: Здоровье</p>
-                        <button class="details-btn" data-doctor="1" data-ru="Подробнее" data-uz="Batafsil">Подробнее</button>
-                    </div>
-                    <div class="doctor-card" data-doctor="2">
-                        <img src="img/doc2.webp" alt="Петрова А.И.">
-                        <h3 data-ru="Петрова А.И." data-uz="Petrova A.I.">Петрова А.И.</h3>
-                        <p data-ru="Кардиолог" data-uz="Kardiolog">Кардиолог</p>
-                        <p class="additional-info" data-ru="Стаж: 12 лет" data-uz="Tajriba: 12 yil">Стаж: 12 лет</p>
-                        <p class="additional-info" data-ru="Клиника: Сердце" data-uz="Klinika: Yurak">Клиника: Сердце</p>
-                        <button class="details-btn" data-doctor="2" data-ru="Подробнее" data-uz="Batafsil">Подробнее</button>
-                    </div>
-                    <div class="doctor-card" data-doctor="3">
-                        <img src="img/doc3.jpg" alt="Сидоров А.В.">
-                        <h3 data-ru="Сидоров А.В." data-uz="Sidorov A.V.">Сидоров А.В.</h3>
-                        <p data-ru="Невролог" data-uz="Nevrolog">Невролог</p>
-                        <p class="additional-info" data-ru="Стаж: 10 лет" data-uz="Tajriba: 10 yil">Стаж: 10 лет</p>
-                        <p class="additional-info" data-ru="Клиника: Нейрон" data-uz="Klinika: Neyron">Клиника: Нейрон</p>
-                        <button class="details-btn" data-doctor="3" data-ru="Подробнее" data-uz="Batafsil">Подробнее</button>
-                    </div>
-                    <div class="doctor-card" data-doctor="4">
-                        <img src="img/doc4.webp" alt="Кузнецова О.С.">
-                        <h3 data-ru="Кузнецова О.С." data-uz="Kuznetsova O.S.">Кузнецова О.С.</h3>
-                        <p data-ru="Педиатр" data-uz="Pediatr">Педиатр</p>
-                        <p class="additional-info" data-ru="Стаж: 8 лет" data-uz="Tajriba: 8 yil">Стаж: 8 лет</p>
-                        <p class="additional-info" data-ru="Клиника: Малыш" data-uz="Klinika: Bolajon">Клиника: Малыш</p>
-                        <button class="details-btn" data-doctor="4" data-ru="Подробнее" data-uz="Batafsil">Подробнее</button>
-                    </div>
+                <div class="doctors-list" id="doctors-list">
+                    <!-- Doctors loaded dynamically from API -->
                 </div>
             </div>
         </section>
@@ -84,11 +56,8 @@
         <section id="services" class="services-section">
             <div class="container">
                 <h2 data-ru="Наши услуги" data-uz="Bizning xizmatlar">Наши услуги</h2>
-                <div class="services-grid">
-                    <div class="service-item" data-ru="Консультации" data-uz="Maslahatlar"><i class="fas fa-user-md"></i> Консультации</div>
-                    <div class="service-item" data-ru="Диагностика" data-uz="Diagnostika"><i class="fas fa-x-ray"></i> Диагностика</div>
-                    <div class="service-item" data-ru="Лечение" data-uz="Davolash"><i class="fas fa-syringe"></i> Лечение</div>
-                    <div class="service-item" data-ru="Профилактика" data-uz="Profilaktika"><i class="fas fa-heartbeat"></i> Профилактика</div>
+                <div class="services-grid" id="services-grid">
+                    <!-- Services loaded dynamically from API -->
                 </div>
             </div>
         </section>
@@ -120,8 +89,8 @@
         <section id="appointment" class="appointment-section">
             <div class="container">
                 <h2 data-ru="Запишитесь на прием" data-uz="Qabulga yoziling">Запишитесь на прием</h2>
-                <button class="btn" data-ru="Записаться" data-uz="Yozilish">Записаться</button>
-                <p data-ru="Выберите врача и удобное время для визита!" data-uz="Shifokor va qulay vaqtni tanlang!">Выберите врача и удобное время для визита!</p>
+                <a href="login.html" class="btn" style="text-decoration:none;" data-ru="Записаться" data-uz="Yozilish">Записаться</a>
+                <p style="margin-top:15px;" data-ru="Выберите врача и удобное время для визита!" data-uz="Shifokor va qulay vaqtni tanlang!">Выберите врача и удобное время для визита!</p>
             </div>
         </section>
     </main>
@@ -147,19 +116,168 @@
         </div>
     </footer>
 
+    <!-- Doctor Detail Modal -->
     <div class="modal" id="doctor-modal">
         <div class="modal-content">
-            <span class="close-btn">×</span>
+            <span class="close-btn">&times;</span>
             <h3 id="modal-doctor-name"></h3>
             <p id="modal-doctor-specialty"></p>
-            <p id="modal-doctor-experience"></p>
-            <p id="modal-doctor-clinic"></p>
-            <p id="modal-doctor-info"></p>
-            <button class="modal-btn" data-ru="Записаться на консультацию" data-uz="Konsultatsiyaga yozilish">Записаться на консультацию</button>
+            <p id="modal-doctor-position"></p>
+            <p id="modal-doctor-phone"></p>
+            <p id="modal-doctor-email"></p>
+            <a href="login.html" class="modal-btn" style="display:inline-block;text-decoration:none;" data-ru="Записаться на консультацию" data-uz="Konsultatsiyaga yozilish">Записаться на консультацию</a>
         </div>
     </div>
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="script.js"></script>
+    <script>
+    $(document).ready(function() {
+        // Language switching
+        function updateLanguage(lang) {
+            $('[data-ru]').each(function() {
+                let text = lang === 'ru' ? $(this).data('ru') : $(this).data('uz');
+                if ($(this).is('h1, h2, h3, p, span, button, a')) {
+                    $(this).text(text);
+                }
+            });
+            $('.lang-link').removeClass('active');
+            $(`.lang-link[data-lang="${lang}"]`).addClass('active');
+        }
+        updateLanguage('ru');
+        $('.lang-link').click(function(e) {
+            e.preventDefault();
+            updateLanguage($(this).data('lang'));
+        });
+
+        // Smooth scroll
+        $('nav a').click(function(e) {
+            if ($(this).attr('href') && $(this).attr('href').startsWith('#')) {
+                e.preventDefault();
+                let target = $(this).attr('href');
+                if ($(target).length) {
+                    $('html, body').animate({ scrollTop: $(target).offset().top - 70 }, 800);
+                }
+            }
+        });
+
+        // Check if user is logged in
+        $.get('/api/auth/me').done(function(user) {
+            $('#nav-login').hide();
+            $('#nav-dashboard').show();
+            const dashMap = { ADMIN: '/admin.html', EMPLOYEE: '/doctor.html', CLIENT: '/patient.html' };
+            $('#dashboard-link').attr('href', dashMap[user.role] || '/patient.html');
+        }).fail(function() {
+            $('#nav-login').show();
+            $('#nav-dashboard').hide();
+        });
+
+        // Load doctors from API
+        $.get('/api/employees').done(function(employees) {
+            const doctorImages = ['img/doc1.jpg','img/doc2.webp','img/doc3.jpg','img/doc4.webp',
+                'img/doc5.jpg','img/doc6.jpeg','img/doc7.webp','img/doc8.webp','img/doc9.jpg','img/doc10.jpg'];
+            let html = '';
+            employees.forEach(function(emp, i) {
+                const img = doctorImages[i % doctorImages.length];
+                html += `
+                    <div class="doctor-card" data-doctor="${emp.employeeId}">
+                        <img src="${img}" alt="${escapeHtml(emp.fullName)}">
+                        <h3>${escapeHtml(emp.fullName)}</h3>
+                        <p>${escapeHtml(emp.specialization || emp.position)}</p>
+                        <p class="additional-info">${escapeHtml(emp.position)}</p>
+                        <p class="additional-info"><i class="fas fa-phone"></i> ${escapeHtml(emp.phone || '')}</p>
+                        <button class="details-btn" data-id="${emp.employeeId}"
+                            data-name="${escapeAttr(emp.fullName)}"
+                            data-spec="${escapeAttr(emp.specialization || '')}"
+                            data-pos="${escapeAttr(emp.position || '')}"
+                            data-phone="${escapeAttr(emp.phone || '')}"
+                            data-email="${escapeAttr(emp.email || '')}">Подробнее</button>
+                    </div>`;
+            });
+            if (!employees.length) {
+                html = '<p style="text-align:center;color:#999;">No doctors available</p>';
+            }
+            $('#doctors-list').html(html);
+
+            // Bind modal open
+            $(document).on('click', '.details-btn', function() {
+                $('#modal-doctor-name').text($(this).data('name'));
+                $('#modal-doctor-specialty').text($(this).data('spec'));
+                $('#modal-doctor-position').html('<i class="fas fa-briefcase"></i> ' + $(this).data('pos'));
+                $('#modal-doctor-phone').html('<i class="fas fa-phone"></i> ' + ($(this).data('phone') || 'N/A'));
+                $('#modal-doctor-email').html('<i class="fas fa-envelope"></i> ' + ($(this).data('email') || 'N/A'));
+                $('#doctor-modal').fadeIn();
+            });
+        }).fail(function() {
+            // Fallback static doctors if API fails
+            $('#doctors-list').html('<p style="text-align:center;color:#999;">Could not load doctors</p>');
+        });
+
+        // Load services from API
+        $.get('/api/services').done(function(services) {
+            const icons = ['fa-user-md', 'fa-x-ray', 'fa-syringe', 'fa-heartbeat', 'fa-stethoscope', 'fa-pills'];
+            let html = '';
+            services.forEach(function(svc, i) {
+                const icon = icons[i % icons.length];
+                html += `<div class="service-item"><i class="fas ${icon}"></i> ${escapeHtml(svc.name)} - ${Number(svc.price).toLocaleString()} UZS</div>`;
+            });
+            if (!services.length) {
+                html = `<div class="service-item"><i class="fas fa-user-md"></i> Консультации</div>
+                        <div class="service-item"><i class="fas fa-x-ray"></i> Диагностика</div>
+                        <div class="service-item"><i class="fas fa-syringe"></i> Лечение</div>
+                        <div class="service-item"><i class="fas fa-heartbeat"></i> Профилактика</div>`;
+            }
+            $('#services-grid').html(html);
+        });
+
+        // Modal close
+        $('.close-btn').click(function() { $('#doctor-modal').fadeOut(); });
+        $('#doctor-modal').click(function(e) { if (e.target === this) $(this).fadeOut(); });
+
+        // Header scroll effect
+        $(window).scroll(function() {
+            if ($(this).scrollTop() > 50) {
+                $('header').css({ 'background-color': '#f0f7f4', 'box-shadow': '0 4px 15px rgba(0,0,0,0.1)' });
+            } else {
+                $('header').css({ 'background-color': '#ffffff', 'box-shadow': '0 2px 10px rgba(0,0,0,0.2)' });
+            }
+        });
+
+        // Scroll animations
+        $(window).scroll(function() {
+            $('.doctor-card, .service-item, .testimonial-box').each(function() {
+                if ($(window).scrollTop() + $(window).height() > $(this).offset().top) {
+                    $(this).addClass('animate__animated animate__fadeInUp');
+                }
+            });
+        });
+
+        // Carousel auto-scroll
+        function autoScrollTestimonials() {
+            $('.testimonials-carousel').animate({ scrollLeft: '+=300' }, 1000, function() {
+                if ($(this).scrollLeft() + $(this).innerWidth() >= $(this)[0].scrollWidth) {
+                    $(this).animate({ scrollLeft: 0 }, 1000);
+                }
+            });
+        }
+        setInterval(autoScrollTestimonials, 5000);
+
+        // Logo animation
+        $('.logo img').addClass('animate__animated animate__bounceIn').css('animation-duration', '1s');
+
+        // Active nav highlight
+        $(window).on('scroll', function() {
+            $('nav a[href^="#"]').each(function() {
+                let section = $($(this).attr('href'));
+                if (section.length && $(window).scrollTop() >= section.offset().top - 80) {
+                    $('nav a').removeClass('active');
+                    $(this).addClass('active');
+                }
+            });
+        });
+    });
+
+    function escapeHtml(t) { if (!t) return ''; const d = document.createElement('div'); d.textContent = t; return d.innerHTML; }
+    function escapeAttr(t) { if (!t) return ''; return t.replace(/"/g, '&quot;').replace(/'/g, '&#39;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+    </script>
 </body>
 </html>

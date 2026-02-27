@@ -3,196 +3,113 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MedVisit - Вход</title>
+    <title>MedVisit - Login</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: Arial, sans-serif;
-        }
-
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Arial, sans-serif; }
         body {
-            background-color: #f0f7f4;
-            color: #333;
-            line-height: 1.6;
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            background: linear-gradient(135deg, #e8f5e9, #f0f7f4, #e0f2f1);
             min-height: 100vh;
-            overflow-x: hidden;
-        }
-
-        .container {
-            max-width: 400px;
-            margin: 20px;
-            padding: 20px;
-            background: white;
-            border-radius: 10px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-            text-align: center;
-        }
-
-        .logo {
-            margin-bottom: 20px;
-        }
-
-        .logo img {
-            width: 150px;
-            height: 50px;
-        }
-
-        h1 {
-            color: #4a9165;
-            font-size: 2em;
-            margin-bottom: 20px;
-        }
-
-        .login-form {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-        }
-
-        .login-form input {
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            font-size: 1em;
-            outline: none;
-            transition: border-color 0.3s ease;
-        }
-
-        .login-form input:focus {
-            border-color: #88c9a1;
-        }
-
-        .login-form button {
-            background-color: #88c9a1;
-            color: white;
-            border: none;
-            padding: 10px;
-            border-radius: 5px;
-            font-size: 1.1em;
-            cursor: pointer;
-            transition: background-color 0.3s ease, transform 0.3s ease;
-        }
-
-        .login-form button:hover {
-            background-color: #6eb385;
-            transform: scale(1.05);
-        }
-
-        .error-message {
-            color: #e74c3c;
-            font-size: 0.9em;
-            margin-top: 10px;
-            display: none;
-        }
-
-        .lang {
-            margin-top: 20px;
             display: flex;
             justify-content: center;
-            gap: 10px;
-        }
-
-        .lang a {
-            color: #4a9165;
-            text-decoration: none;
-            font-size: 1em;
-            display: flex;
             align-items: center;
-            gap: 5px;
         }
-
-        .lang a.active {
-            color: #6eb385;
-            font-weight: bold;
+        .login-container {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 8px 32px rgba(74, 145, 101, 0.15);
+            padding: 40px;
+            width: 100%;
+            max-width: 420px;
+            margin: 20px;
         }
-
-        .lang img {
-            vertical-align: middle;
+        .logo { text-align: center; margin-bottom: 24px; }
+        .logo img { width: 160px; height: auto; }
+        h1 { color: #4a9165; font-size: 1.6em; text-align: center; margin-bottom: 8px; }
+        .subtitle { color: #888; text-align: center; margin-bottom: 28px; font-size: 0.95em; }
+        .form-group { margin-bottom: 18px; position: relative; }
+        .form-group i {
+            position: absolute; left: 14px; top: 50%; transform: translateY(-50%);
+            color: #aaa; font-size: 1em;
         }
-
-        @media (max-width: 480px) {
-            .container {
-                max-width: 90%;
-            }
-
-            h1 {
-                font-size: 1.5em;
-            }
+        .form-group input {
+            width: 100%; padding: 12px 14px 12px 42px;
+            border: 2px solid #e0e0e0; border-radius: 10px;
+            font-size: 1em; outline: none; transition: border-color 0.3s;
+        }
+        .form-group input:focus { border-color: #88c9a1; }
+        .login-btn {
+            width: 100%; padding: 13px; background: linear-gradient(135deg, #88c9a1, #4a9165);
+            color: white; border: none; border-radius: 10px;
+            font-size: 1.1em; cursor: pointer; transition: all 0.3s; font-weight: 600;
+        }
+        .login-btn:hover { transform: translateY(-2px); box-shadow: 0 4px 15px rgba(74, 145, 101, 0.4); }
+        .error-msg {
+            background: #ffeaea; color: #d32f2f; padding: 10px 14px;
+            border-radius: 8px; margin-bottom: 16px; font-size: 0.9em;
+            display: none; text-align: center;
+        }
+        .error-msg.visible { display: block; }
+        .back-link {
+            display: block; text-align: center; margin-top: 20px;
+            color: #4a9165; text-decoration: none; font-size: 0.95em;
+        }
+        .back-link:hover { text-decoration: underline; }
+        .demo-credentials {
+            margin-top: 24px; padding: 16px; background: #f5faf7;
+            border-radius: 10px; font-size: 0.85em; color: #666;
+        }
+        .demo-credentials h4 { color: #4a9165; margin-bottom: 8px; font-size: 0.95em; }
+        .demo-credentials p { margin-bottom: 4px; }
+        .demo-credentials code {
+            background: #e8f5e9; padding: 2px 6px; border-radius: 4px;
+            font-family: monospace; color: #2e7d32;
         }
     </style>
 </head>
 <body>
-    <div class="container animate__animated animate__fadeIn">
+    <div class="login-container animate__animated animate__fadeIn">
         <div class="logo">
             <img src="img/Med Vizit (1).png" alt="MedVisit Logo">
         </div>
-        <h1 data-ru="Вход в аккаунт" data-uz="Hisobga kirish">Вход в аккаунт</h1>
-        <div class="login-form">
-            <input type="text" id="username" placeholder="Логин" data-ru="Логин" data-uz="Login">
-            <input type="password" id="password" placeholder="Пароль" data-ru="Пароль" data-uz="Parol">
-            <button id="login-btn" data-ru="Войти" data-uz="Kirish">Войти</button>
-            <p class="error-message" id="error-message" data-ru="Неверный логин или пароль" data-uz="Noto'g'ri login yoki parol">Неверный логин или пароль</p>
+        <h1><i class="fas fa-sign-in-alt"></i> Login</h1>
+        <p class="subtitle">Sign in to your account</p>
+
+        <div class="error-msg" id="error-msg">
+            <i class="fas fa-exclamation-circle"></i> Incorrect username or password
         </div>
-        <div class="lang">
-            <a href="#" class="lang-link active" data-lang="ru"><img src="https://flagcdn.com/16x12/ru.png" alt="Русский"> <span data-ru="Рус" data-uz="Rus">Рус</span></a>
-            <a href="#" class="lang-link" data-lang="uz"><img src="https://flagcdn.com/16x12/uz.png" alt="Узбекский"> <span data-ru="Узб" data-uz="O'zb">Узб</span></a>
+
+        <form action="/login" method="POST" id="login-form">
+            <div class="form-group">
+                <i class="fas fa-user"></i>
+                <input type="text" name="username" id="username" placeholder="Username" required autocomplete="username">
+            </div>
+            <div class="form-group">
+                <i class="fas fa-lock"></i>
+                <input type="password" name="password" id="password" placeholder="Password" required autocomplete="current-password">
+            </div>
+            <button type="submit" class="login-btn">
+                <i class="fas fa-arrow-right"></i> Sign In
+            </button>
+        </form>
+
+        <a href="/index.html" class="back-link"><i class="fas fa-arrow-left"></i> Back to Home</a>
+
+        <div class="demo-credentials">
+            <h4><i class="fas fa-info-circle"></i> Demo Accounts</h4>
+            <p><strong>Admin:</strong> <code>admin</code> / <code>123456</code></p>
+            <p><strong>Doctor:</strong> <code>doctor1</code> / <code>123456</code></p>
+            <p><strong>Patient:</strong> <code>patient1</code> / <code>123456</code></p>
         </div>
     </div>
 
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
-        $(document).ready(function() {
-            // Функция переключения языка
-            function updateLanguage(lang) {
-                $('[data-ru]').each(function() {
-                    let text = lang === 'ru' ? $(this).data('ru') : $(this).data('uz');
-                    if ($(this).is('h1, p, span, button')) {
-                        $(this).text(text);
-                    } else if ($(this).is('input')) {
-                        $(this).attr('placeholder', text);
-                    }
-                });
-                $('.lang-link').removeClass('active');
-                $(`.lang-link[data-lang="${lang}"]`).addClass('active');
-            }
-
-            // Инициализация языка по умолчанию
-            updateLanguage('ru');
-
-            // Обработчик переключения языка
-            $('.lang-link').click(function(e) {
-                e.preventDefault();
-                let lang = $(this).data('lang');
-                updateLanguage(lang);
-            });
-
-            // Обработка клика по кнопке логина
-            $('#login-btn').click(function() {
-                let username = $('#username').val();
-                let password = $('#password').val();
-                let lang = $('.lang-link.active').data('lang') || 'ru';
-
-                if (username === '' || password === '') {
-                    $('#error-message').fadeIn();
-                    setTimeout(() => {
-                        $('#error-message').fadeOut();
-                    }, 3000);
-                } else {
-                    // Здесь можно добавить логику отправки данных на сервер
-                    $(this).animate({ width: '150px' }, 300).text(lang === 'ru' ? 'Вход выполнен!' : 'Kirish amalga oshirildi!');
-                    setTimeout(() => {
-                        $(this).animate({ width: '100px' }, 300).text(lang === 'ru' ? 'Войти' : 'Kirish');
-                    }, 1500);
-                }
-            });
-        });
+        // Show error if redirected with error param
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.get('error') === 'true') {
+            document.getElementById('error-msg').classList.add('visible');
+        }
     </script>
 </body>
 </html>

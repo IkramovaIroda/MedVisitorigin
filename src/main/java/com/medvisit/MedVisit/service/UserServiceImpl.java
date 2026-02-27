@@ -5,6 +5,7 @@ import com.medvisit.MedVisit.entity.User;
 import com.medvisit.MedVisit.repository.UserRepository;
 import com.medvisit.MedVisit.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -15,6 +16,7 @@ import java.util.stream.Collectors;
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
     @Override
     public UserDto create(UserDto dto) {
@@ -52,7 +54,9 @@ public class UserServiceImpl implements UserService {
 
     private void copyDtoToEntity(UserDto dto, User user) {
         user.setUsername(dto.getUsername());
-        user.setPassword(dto.getPassword()); // В будущем заменить на хэш
+        if (dto.getPassword() != null && !dto.getPassword().isEmpty()) {
+            user.setPassword(passwordEncoder.encode(dto.getPassword()));
+        }
         user.setRole(dto.getRole());
         user.setActive(dto.getActive());
     }
