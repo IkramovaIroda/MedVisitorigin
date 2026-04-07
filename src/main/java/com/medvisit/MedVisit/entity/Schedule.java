@@ -23,4 +23,7 @@ public class Schedule {
     @ManyToOne
     @JoinColumn(name = "employee_id")
     private Employee employee;
+
+    @OneToMany(mappedBy = "schedule", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private java.util.List<AppointmentSlot> appointmentSlots = new java.util.ArrayList<>();
 }

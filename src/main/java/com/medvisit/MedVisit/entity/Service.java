@@ -17,6 +17,7 @@ public class Service {
     private String name;
     private String description;
     private Double price;
+    private Integer duration; // Duration in minutes
 
     @ManyToOne
     @JoinColumn(name = "clinic_id")

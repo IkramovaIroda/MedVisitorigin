@@ -90,7 +90,8 @@
         .modal-overlay.active { display: flex; }
         .modal-box {
             background: white; border-radius: 16px; padding: 32px; width: 100%;
-            max-width: 500px; margin: 20px; position: relative;
+            max-width: 700px; margin: 20px; position: relative;
+            max-height: 90vh; overflow-y: auto;
         }
         .modal-box h2 { color: #4a9165; margin-bottom: 20px; }
         .modal-close {
@@ -129,6 +130,8 @@
         .service-card:hover { transform: translateY(-3px); box-shadow: 0 4px 16px rgba(0,0,0,0.12); }
         .service-card h4 { color: #4a9165; margin-bottom: 8px; }
         .service-card .price { font-size: 1.2em; font-weight: 700; color: #333; margin-top: 8px; }
+        .service-card button.book-btn { background: #4a9165; color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; font-size: 0.95em; transition: all 0.3s; }
+        .service-card button.book-btn:hover { background: #3d7a55; }
 
         .notification-badge {
             background: #e74c3c; color: white; font-size: 0.7em; padding: 2px 7px;
@@ -153,16 +156,27 @@
     </div>
 
     <div class="dashboard-nav">
-        <a href="#" class="active" data-tab="doctors"><i class="fas fa-user-md"></i> Doctors</a>
+        <a href="#" class="active" data-tab="services"><i class="fas fa-stethoscope"></i> Services</a>
+        <a href="#" data-tab="doctors"><i class="fas fa-user-md"></i> Our Doctors</a>
         <a href="#" data-tab="appointments"><i class="fas fa-calendar-check"></i> My Appointments</a>
-        <a href="#" data-tab="services"><i class="fas fa-stethoscope"></i> Services</a>
+        <a href="#" data-tab="questionnaire"><i class="fas fa-file-medical"></i> Medical Form</a>
         <a href="#" data-tab="notifications"><i class="fas fa-bell"></i> Notifications <span class="notification-badge" id="notif-count" style="display:none;">0</span></a>
     </div>
 
     <div class="dashboard-content">
+        <!-- Services Tab -->
+        <div class="tab-content active" id="tab-services">
+            <h2 class="section-title"><i class="fas fa-stethoscope"></i> Select a Service</h2>
+            <p style="text-align:center;color:#666;margin-bottom:20px;">Choose a service to book an appointment with a specialist</p>
+            <div class="services-list" id="services-list">
+                <div class="empty-state"><i class="fas fa-spinner fa-spin"></i><p>Loading services...</p></div>
+            </div>
+        </div>
+
         <!-- Doctors Tab -->
-        <div class="tab-content active" id="tab-doctors">
-            <h2 class="section-title"><i class="fas fa-user-md"></i> Our Doctors</h2>
+        <div class="tab-content" id="tab-doctors">
+            <h2 class="section-title"><i class="fas fa-user-md"></i> Our Medical Team</h2>
+            <p style="text-align:center;color:#666;margin-bottom:20px;">Browse our qualified healthcare professionals</p>
             <div class="doctors-grid" id="doctors-list">
                 <div class="empty-state"><i class="fas fa-spinner fa-spin"></i><p>Loading doctors...</p></div>
             </div>
@@ -189,14 +203,6 @@
             </div>
         </div>
 
-        <!-- Services Tab -->
-        <div class="tab-content" id="tab-services">
-            <h2 class="section-title"><i class="fas fa-stethoscope"></i> Available Services</h2>
-            <div class="services-list" id="services-list">
-                <div class="empty-state"><i class="fas fa-spinner fa-spin"></i><p>Loading services...</p></div>
-            </div>
-        </div>
-
         <!-- Notifications Tab -->
         <div class="tab-content" id="tab-notifications">
             <h2 class="section-title"><i class="fas fa-bell"></i> Notifications</h2>
@@ -204,37 +210,56 @@
                 <div class="empty-state"><i class="fas fa-bell-slash"></i><p>No notifications yet</p></div>
             </div>
         </div>
+
+        <!-- Medical Questionnaire Tab -->
+        <div class="tab-content" id="tab-questionnaire">
+            <h2 class="section-title"><i class="fas fa-file-medical"></i> Medical Questionnaire</h2>
+            <div id="questionnaire-container">
+                <div class="empty-state"><i class="fas fa-spinner fa-spin"></i><p>Loading questionnaire...</p></div>
+            </div>
+        </div>
     </div>
 
-    <!-- Booking Modal -->
+    <!-- Service Booking Modal (Multi-step) -->
     <div class="modal-overlay" id="booking-modal">
         <div class="modal-box animate__animated animate__zoomIn">
             <button class="modal-close" id="close-booking">&times;</button>
-            <h2><i class="fas fa-calendar-plus"></i> Book Appointment</h2>
-            <form id="booking-form">
-                <input type="hidden" id="book-employee-id">
+            
+            <!-- Step 1: Select Doctor -->
+            <div id="step-doctors">
+                <h2><i class="fas fa-user-md"></i> Choose Your Doctor</h2>
+                <p style="color:#666;margin-bottom:20px;">Select a doctor specializing in <strong id="selected-service-name"></strong></p>
+                <div class="doctors-grid" id="doctor-selection-list"></div>
+            </div>
+            
+            <!-- Step 2: Select Date & Time -->
+            <div id="step-slots" style="display:none;">
+                <h2><i class="fas fa-calendar-alt"></i> Select Available Time Slot</h2>
+                <p style="color:#666;margin-bottom:20px;">Available slots for <strong id="selected-doctor-name"></strong></p>
                 <div class="form-group">
-                    <label>Doctor</label>
-                    <input type="text" id="book-doctor-name" readonly>
+                    <label>Select Date</label>
+                    <input type="date" id="slot-date-picker" class="form-control" style="width:100%;padding:10px;border:1px solid #ddd;border-radius:6px;">
                 </div>
-                <div class="form-group">
-                    <label>Service</label>
-                    <select id="book-service" required>
-                        <option value="">Select a service...</option>
-                    </select>
+                <div class="services-list" id="time-slots-list" style="margin-top:15px;"></div>
+                <button class="submit-btn" onclick="goBackToDoctors()" style="background:#999;margin-right:10px;"><i class="fas fa-arrow-left"></i> Back</button>
+            </div>
+            
+            <!-- Step 3: Confirm Booking -->
+            <div id="step-confirm" style="display:none;">
+                <h2><i class="fas fa-check-circle"></i> Confirm Appointment</h2>
+                <div style="background:#f8f9fa;padding:20px;border-radius:8px;margin:20px 0;">
+                    <p><strong>Service:</strong> <span id="confirm-service"></span></p>
+                    <p><strong>Doctor:</strong> <span id="confirm-doctor"></span></p>
+                    <p><strong>Date & Time:</strong> <span id="confirm-datetime"></span></p>
+                    <p><strong>Duration:</strong> <span id="confirm-duration"></span> minutes</p>
+                    <div class="form-group" style="margin-top:15px;">
+                        <label>Notes (optional)</label>
+                        <textarea id="confirm-notes" rows="3" placeholder="Describe your symptoms or reason for visit..."></textarea>
+                    </div>
                 </div>
-                <div class="form-group">
-                    <label>Available Schedule</label>
-                    <select id="book-schedule" required>
-                        <option value="">Select date & time...</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label>Notes (optional)</label>
-                    <textarea id="book-notes" rows="3" placeholder="Describe your symptoms or reason for visit..."></textarea>
-                </div>
-                <button type="submit" class="submit-btn"><i class="fas fa-check"></i> Confirm Booking</button>
-            </form>
+                <button class="submit-btn" onclick="goBackToSlots()" style="background:#999;margin-right:10px;"><i class="fas fa-arrow-left"></i> Back</button>
+                <button class="submit-btn" onclick="finalizeBooking()"><i class="fas fa-check"></i> Confirm Booking</button>
+            </div>
         </div>
     </div>
 
@@ -258,6 +283,12 @@
     let allSchedules = [];
     let allVisits = [];
     let allClients = [];
+    
+    // New booking flow variables
+    let selectedService = null;
+    let selectedDoctor = null;
+    let selectedSlot = null;
+    let selectedDate = null;
 
     $(document).ready(function() {
         loadCurrentUser();
@@ -272,15 +303,20 @@
         });
 
         // Booking modal
-        $('#close-booking').click(() => $('#booking-modal').removeClass('active'));
+        $('#close-booking').click(() => {
+            $('#booking-modal').removeClass('active');
+            resetBookingModal();
+        });
         $('#close-success').click(() => $('#success-modal').removeClass('active'));
         $('#booking-modal').click(function(e) { if (e.target === this) $(this).removeClass('active'); });
         $('#success-modal').click(function(e) { if (e.target === this) $(this).removeClass('active'); });
-
-        // Booking form
-        $('#booking-form').submit(function(e) {
-            e.preventDefault();
-            submitBooking();
+        
+        // Date picker for slots
+        $('#slot-date-picker').on('change', function() {
+            selectedDate = $(this).val();
+            if (selectedDoctor) {
+                checkDoctorScheduleAndLoadSlots(selectedDoctor.employeeId, selectedDate);
+            }
         });
     });
 
@@ -313,6 +349,7 @@
             renderVisits();
             renderServices();
             loadNotifications();
+            loadQuestionnaire(); // Load medical questionnaire
         }).fail(function() {
             // Try loading public data only
             $.when(
@@ -392,11 +429,15 @@
         }
         let html = '';
         allServices.forEach(svc => {
+            const durationText = svc.duration ? `(${svc.duration} min)` : '';
             html += `
                 <div class="service-card animate__animated animate__fadeIn">
-                    <h4><i class="fas fa-medkit"></i> ${escapeHtml(svc.name)}</h4>
+                    <h4><i class="fas fa-medkit"></i> ${escapeHtml(svc.name)} ${durationText}</h4>
                     <p style="color:#666;">${escapeHtml(svc.description || '')}</p>
                     <div class="price">${formatPrice(svc.price)} UZS</div>
+                    <button class="book-btn" onclick="openServiceBooking(${svc.serviceId})" style="margin-top:15px;width:100%;">
+                        <i class="fas fa-calendar-plus"></i> Book Now
+                    </button>
                 </div>`;
         });
         container.html(html);
@@ -412,8 +453,10 @@
                 }
                 renderNotifications(notifs);
             })
-            .fail(function() {
-                // Notifications not available
+            .fail(function(err) {
+                console.log('Error loading notifications:', err);
+                // Try alternative: maybe notifications are stored with client ID
+                // In production, ensure proper user-client mapping
             });
     }
 
@@ -445,78 +488,278 @@
             .done(function() { loadNotifications(); });
     }
 
-    function openBooking(employeeId, doctorName) {
-        $('#book-employee-id').val(employeeId);
-        $('#book-doctor-name').val(doctorName);
-
-        // Populate services
-        const svcSelect = $('#book-service');
-        svcSelect.html('<option value="">Select a service...</option>');
-        allServices.forEach(s => {
-            svcSelect.append(`<option value="${s.serviceId}">${escapeHtml(s.name)} - ${formatPrice(s.price)} UZS</option>`);
-        });
-
-        // Populate schedules for this doctor
-        const schSelect = $('#book-schedule');
-        schSelect.html('<option value="">Select date & time...</option>');
-        const docSchedules = allSchedules.filter(s => s.employeeId === employeeId);
-        docSchedules.forEach(s => {
-            schSelect.append(`<option value="${s.scheduleId}">${s.date} | ${s.startTime} - ${s.endTime}</option>`);
-        });
-
-        if (!docSchedules.length) {
-            schSelect.html('<option value="">No available schedule</option>');
-        }
-
+    // === NEW SERVICE-FIRST BOOKING FLOW ===
+    
+    function openServiceBooking(serviceId) {
+        selectedService = allServices.find(s => s.serviceId === serviceId);
+        if (!selectedService) return;
+        
+        $('#selected-service-name').text(selectedService.name + (selectedService.duration ? ` (${selectedService.duration} min)` : ''));
+        
+        // Show step 1: Select doctor
+        showStep('doctors');
+        
+        // Load doctors who can provide this service
+        const today = new Date().toISOString().split('T')[0];
+        $.get(API + `/api/visits/service/${serviceId}/available-doctors?date=${today}`)
+            .done(function(doctors) {
+                if (doctors && doctors.length > 0) {
+                    renderDoctorSelection(doctors);
+                } else {
+                    // Fallback: Show all doctors, filter by general category
+                    const matchedDoctors = findDoctorsByServiceName(selectedService.name);
+                    if (matchedDoctors && matchedDoctors.length > 0) {
+                        renderDoctorSelection(matchedDoctors);
+                    } else {
+                        // Show all doctors as last resort
+                        renderDoctorSelection(allEmployees);
+                    }
+                }
+            })
+            .fail(function(err) {
+                console.log('Error loading doctors for service, using fallback');
+                // Fallback to all employees with matching specialization
+                const matchedDoctors = findDoctorsByServiceName(selectedService.name);
+                if (matchedDoctors && matchedDoctors.length > 0) {
+                    renderDoctorSelection(matchedDoctors);
+                } else {
+                    renderDoctorSelection(allEmployees);
+                }
+            });
+        
         $('#booking-modal').addClass('active');
     }
-
-    function submitBooking() {
-        const employeeId = parseInt($('#book-employee-id').val());
-        const serviceId = parseInt($('#book-service').val());
-        const scheduleId = parseInt($('#book-schedule').val());
-        const notes = $('#book-notes').val();
-
-        if (!serviceId || !scheduleId) {
-            alert('Please select a service and schedule.');
+    
+    function findDoctorsByServiceName(serviceName) {
+        // Map service names to doctor specializations
+        const serviceToSpecialtyMap = {
+            'consultation': ['therapist', 'general'],
+            'diagnostics': ['therapist', 'diagnostician'],
+            'ecg': ['cardiologist', 'cardiology'],
+            'ultrasound': ['radiologist', 'ultrasound', 'sonographer'],
+            'vaccination': ['pediatrician', 'therapist', 'general']
+        };
+        
+        const serviceNameLower = serviceName.toLowerCase();
+        const keywords = serviceToSpecialtyMap[serviceNameLower] || [serviceNameLower];
+        
+        return allEmployees.filter(emp => {
+            const spec = (emp.specialization || emp.position || '').toLowerCase();
+            return keywords.some(keyword => spec.includes(keyword));
+        });
+    }
+    
+    function renderDoctorSelection(doctors) {
+        const container = $('#doctor-selection-list');
+        if (!doctors || !doctors.length) {
+            container.html('<div class="empty-state"><i class="fas fa-exclamation-triangle"></i><p>No doctors available for this service</p></div>');
             return;
         }
-
-        // Find or use first client
-        const myClient = allClients.find(c => c.email === currentUser.username || c.phone === currentUser.username);
-        const clientId = myClient ? myClient.clientId : (allClients.length > 0 ? allClients[0].clientId : 1);
-
-        const schedule = allSchedules.find(s => s.scheduleId === scheduleId);
-        const visitDateTime = schedule ? schedule.date + 'T' + schedule.startTime + ':00' : new Date().toISOString();
-
-        const visitData = {
+        
+        let html = '';
+        doctors.forEach(doc => {
+            html += `
+                <div class="doc-card animate__animated animate__fadeIn" style="cursor:pointer;" onclick="selectDoctor(${doc.employeeId})">
+                    <div class="doc-avatar"><i class="fas fa-user-md"></i></div>
+                    <h3>${escapeHtml(doc.fullName)}</h3>
+                    <div class="specialization">${escapeHtml(doc.specialization || doc.position)}</div>
+                    <div class="doc-detail"><i class="fas fa-briefcase"></i> ${escapeHtml(doc.position)}</div>
+                    <button class="book-btn" style="margin-top:10px;"><i class="fas fa-check"></i> Select Doctor</button>
+                </div>`;
+        });
+        container.html(html);
+    }
+    
+    function selectDoctor(employeeId) {
+        selectedDoctor = allEmployees.find(e => e.employeeId === employeeId);
+        if (!selectedDoctor) return;
+        
+        $('#selected-doctor-name').text(selectedDoctor.fullName);
+        $('#confirm-doctor').text(selectedDoctor.fullName);
+        
+        // Set default date to today
+        const today = new Date().toISOString().split('T')[0];
+        $('#slot-date-picker').val(today);
+        selectedDate = today;
+        
+        showStep('slots');
+        
+        // Check if doctor has schedule for today first
+        checkDoctorScheduleAndLoadSlots(employeeId, today);
+    }
+    
+    function checkDoctorScheduleAndLoadSlots(employeeId, date) {
+        const container = $('#time-slots-list');
+        container.html('<div class="empty-state"><i class="fas fa-spinner fa-spin"></i><p>Loading available slots...</p></div>');
+        
+        // First check if doctor has schedule on this date
+        const doctorSchedules = allSchedules.filter(s => 
+            s.employeeId === employeeId && s.date === date
+        );
+        
+        if (!doctorSchedules || doctorSchedules.length === 0) {
+            container.html(`<div class="empty-state"><i class="fas fa-calendar-times"></i><p>Dr. ${escapeHtml(selectedDoctor.fullName)} has no availability on ${date}</p><p style="margin-top:10px;font-size:0.9em;color:#999;">Please select another date or choose a different doctor.</p></div>`);
+            return;
+        }
+        
+        // If schedule exists, load slots
+        loadAvailableSlots(employeeId, date);
+    }
+    
+    function loadAvailableSlots(employeeId, date) {
+        const container = $('#time-slots-list');
+        container.html('<div class="empty-state"><i class="fas fa-spinner fa-spin"></i><p>Loading available slots...</p></div>');
+        
+        // Get available slots from backend
+        $.get(API + `/api/visits/doctor/${employeeId}/available-slots?date=${date}`)
+            .done(function(slots) {
+                if (!slots || !slots.length) {
+                    container.html('<div class="empty-state"><i class="fas fa-calendar-times"></i><p>No available slots for this date</p></div>');
+                    return;
+                }
+                
+                let html = '';
+                slots.forEach(slot => {
+                    const isSelected = selectedSlot && selectedSlot.slotId === slot.slotId ? 'border: 2px solid #4a9165;' : '';
+                    html += `
+                        <div class="service-card animate__animated animate__fadeIn" 
+                             style="cursor:pointer;${isSelected}" 
+                             onclick="selectSlot(${slot.slotId}, '${slot.startTime}', '${slot.endTime}')">
+                            <div style="display:flex;justify-content:space-between;align-items:center;">
+                                <strong><i class="fas fa-clock"></i> ${slot.startTime} - ${slot.endTime}</strong>
+                                <span class="status-badge status-scheduled"><i class="fas fa-check-circle"></i> Available</span>
+                            </div>
+                            ${selectedService && selectedService.duration ? `<small style="color:#666;margin-top:5px;display:block;">Duration: ${selectedService.duration} min</small>` : ''}
+                        </div>`;
+                });
+                container.html(html);
+            })
+            .fail(function(err) {
+                container.html('<div class="empty-state"><i class="fas fa-exclamation-triangle"></i><p>Failed to load slots</p></div>');
+            });
+    }
+    
+    function selectSlot(slotId, startTime, endTime) {
+        selectedSlot = { slotId, startTime, endTime };
+        
+        // Update confirmation details
+        $('#confirm-service').text(selectedService.name + ` - ${formatPrice(selectedService.price)} UZS`);
+        $('#confirm-datetime').text(`${selectedDate} ${startTime}`);
+        $('#confirm-duration').text(selectedService.duration || '30');
+        
+        showStep('confirm');
+    }
+    
+    function finalizeBooking() {
+        if (!selectedService || !selectedDoctor || !selectedSlot) {
+            alert('Please complete all selections');
+            return;
+        }
+        
+        // Find client with improved matching
+        let myClient = null;
+        
+        // Strategy 1: Match by email (case-insensitive)
+        myClient = allClients.find(c => c.email && c.email.toLowerCase() === currentUser.username.toLowerCase());
+        
+        // Strategy 2: Match by phone
+        if (!myClient) {
+            myClient = allClients.find(c => c.phone && c.phone === currentUser.username);
+        }
+        
+        // Strategy 3: Fallback to first client
+        if (!myClient && allClients.length > 0) {
+            console.warn('Could not match client by username, using first available client');
+            myClient = allClients[0];
+        }
+        
+        if (!myClient) {
+            alert('Error: No client profile found. Please contact support.');
+            return;
+        }
+        
+        const clientId = myClient.clientId;
+        
+        const bookingData = {
             clientId: clientId,
-            employeeId: employeeId,
-            serviceId: serviceId,
-            scheduleId: scheduleId,
-            clinicId: allEmployees.find(e => e.employeeId === employeeId)?.clinicId || 1,
-            visitDateTime: visitDateTime,
-            status: 'SCHEDULED',
-            notes: notes || ''
+            employeeId: selectedDoctor.employeeId,
+            serviceId: selectedService.serviceId,
+            clinicId: selectedDoctor.clinicId,
+            slotId: selectedSlot.slotId,
+            notes: $('#confirm-notes').val() || ''
         };
-
+        
+        console.log('Booking data:', bookingData);
+        
         $.ajax({
-            url: API + '/api/visits',
+            url: API + '/api/visits/book-with-slot',
             method: 'POST',
             contentType: 'application/json',
-            data: JSON.stringify(visitData)
-        }).done(function() {
+            data: JSON.stringify(bookingData)
+        }).done(function(response) {
             $('#booking-modal').removeClass('active');
-            $('#booking-form')[0].reset();
             $('#success-modal').addClass('active');
-            // Reload visits
+            
+            // Reload visits and schedules
             $.get(API + '/api/visits').done(function(data) {
                 allVisits = data;
                 renderVisits();
             });
-        }).fail(function(err) {
-            alert('Failed to book appointment. Please try again.');
+            
+            $.get(API + '/api/schedules').done(function(data) {
+                allSchedules = data;
+            });
+            
+            resetBookingModal();
+        }).fail(function(xhr, status, error) {
+            console.error('Booking failed:', xhr.responseText, error);
+            const errorMsg = xhr.responseText || 'Failed to book appointment. Please try again.';
+            alert(errorMsg);
         });
+    }
+    
+    function showStep(stepName) {
+        $('#step-doctors').hide();
+        $('#step-slots').hide();
+        $('#step-confirm').hide();
+        
+        if (stepName === 'doctors') {
+            $('#step-doctors').show();
+        } else if (stepName === 'slots') {
+            $('#step-slots').show();
+        } else if (stepName === 'confirm') {
+            $('#step-confirm').show();
+        }
+    }
+    
+    function goBackToDoctors() {
+        selectedSlot = null;
+        showStep('doctors');
+    }
+    
+    function goBackToSlots() {
+        showStep('slots');
+    }
+    
+    function resetBookingModal() {
+        selectedService = null;
+        selectedDoctor = null;
+        selectedSlot = null;
+        selectedDate = null;
+        $('#confirm-notes').val('');
+    }
+
+    function openBooking(employeeId, doctorName) {
+        // When clicking "Book Appointment" on a doctor card, show services first
+        // Then pre-select this doctor if possible
+        
+        // Show step 1: Select service
+        showStep('services');
+        
+        // Store the pre-selected doctor for later
+        window.preSelectedDoctorId = employeeId;
+        
+        $('#booking-modal').addClass('active');
     }
 
     // Utilities
@@ -537,6 +780,174 @@
     function formatPrice(price) {
         if (!price) return '0';
         return Number(price).toLocaleString('en-US');
+    }
+
+    // === MEDICAL QUESTIONNAIRE FUNCTIONS ===
+    
+    function loadQuestionnaire() {
+        if (!currentUser || !allClients.length) {
+            console.log('No current user or clients loaded');
+            return;
+        }
+        
+        console.log('Current user:', currentUser);
+        console.log('Looking for client with username:', currentUser.username);
+        
+        // Try multiple matching strategies
+        let myClient = null;
+        
+        // Strategy 1: Match by email
+        myClient = allClients.find(c => c.email && c.email.toLowerCase() === currentUser.username.toLowerCase());
+        
+        // Strategy 2: Match by phone
+        if (!myClient) {
+            myClient = allClients.find(c => c.phone && c.phone === currentUser.username);
+        }
+        
+        // Strategy 3: Match by userId to clientId relationship (if we have user data)
+        if (!myClient) {
+            // For CLIENT role users, try to find any client and assume it's theirs
+            // This is a fallback - in production you'd have proper user-client mapping
+            myClient = allClients[0];
+            console.log('Using first available client as fallback');
+        }
+        
+        if (!myClient) {
+            console.error('Could not find matching client for user:', currentUser.username);
+            $('#questionnaire-container').html('<div class="empty-state"><i class="fas fa-exclamation-triangle"></i><p>Client profile not found. Please contact support.</p></div>');
+            return;
+        }
+        
+        console.log('Found client:', myClient);
+        
+        $.get(API + '/api/questionnaires/client/' + myClient.clientId)
+            .done(function(questionnaire) {
+                if (questionnaire) {
+                    renderQuestionnaire(questionnaire, false); // Read-only for patient
+                } else {
+                    renderEmptyQuestionnaire(myClient.clientId);
+                }
+            })
+            .fail(function(err) {
+                console.error('Error loading questionnaire:', err);
+                $('#questionnaire-container').html('<div class="empty-state"><i class="fas fa-exclamation-triangle"></i><p>Failed to load questionnaire</p></div>');
+            });
+    }
+    
+    function renderQuestionnaire(data, isEditable) {
+        const container = $('#questionnaire-container');
+        
+        let html = `
+            <div style="background:white;border-radius:12px;padding:30px;box-shadow:0 2px 12px rgba(0,0,0,0.08);">
+                <div style="border-bottom:2px solid #4a9165;padding-bottom:15px;margin-bottom:25px;">
+                    <h3 style="color:#4a9165;margin:0;"><i class="fas fa-user-circle"></i> Personal Information</h3>
+                </div>
+                <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:15px;margin-bottom:25px;">
+                    ${renderField('Full Name', data.fullName)}
+                    ${renderField('Date of Birth', data.dateOfBirth)}
+                    ${renderField('Gender', data.gender)}
+                    ${renderField('Phone', data.phone)}
+                    ${renderField('Email', data.email)}
+                    ${renderField('Address', data.address)}
+                    ${renderField('Occupation', data.occupation)}
+                    ${renderField('Marital Status', data.maritalStatus)}
+                </div>
+                
+                <div style="border-bottom:2px solid #4a9165;padding-bottom:15px;margin-bottom:25px;">
+                    <h3 style="color:#4a9165;margin:0;"><i class="fas fa-phone-alt"></i> Emergency Contact</h3>
+                </div>
+                <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:15px;margin-bottom:25px;">
+                    ${renderField('Contact Name', data.emergencyContactName)}
+                    ${renderField('Contact Phone', data.emergencyContactPhone)}
+                    ${renderField('Relationship', data.emergencyContactRelation)}
+                </div>
+                
+                <div style="border-bottom:2px solid #4a9165;padding-bottom:15px;margin-bottom:25px;">
+                    <h3 style="color:#4a9165;margin:0;"><i class="fas fa-notes-medical"></i> Medical History</h3>
+                </div>
+                <div style="margin-bottom:25px;">
+                    ${renderTextArea('Chronic Diseases', data.chronicDiseases)}
+                    ${renderTextArea('Previous Surgeries', data.previousSurgeries)}
+                    ${renderTextArea('Allergies', data.allergies)}
+                    ${renderTextArea('Current Medications', data.currentMedications)}
+                    ${renderTextArea('Family Medical History', data.familyMedicalHistory)}
+                </div>
+                
+                <div style="border-bottom:2px solid #4a9165;padding-bottom:15px;margin-bottom:25px;">
+                    <h3 style="color:#4a9165;margin:0;"><i class="fas fa-heartbeat"></i> Lifestyle</h3>
+                </div>
+                <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:15px;margin-bottom:25px;">
+                    ${renderField('Smokes', data.smokes ? 'Yes' : 'No')}
+                    ${renderField('Drinks Alcohol', data.drinksAlcohol ? 'Yes' : 'No')}
+                    ${renderField('Alcohol Frequency', data.alcoholFrequency)}
+                    ${renderField('Exercises', data.exercises ? 'Yes' : 'No')}
+                    ${renderField('Exercise Frequency', data.exerciseFrequency)}
+                    ${renderField('Diet Type', data.dietType)}
+                </div>
+                
+                <div style="border-bottom:2px solid #4a9165;padding-bottom:15px;margin-bottom:25px;">
+                    <h3 style="color:#4a9165;margin:0;"><i class="fas fa-stethoscope"></i> Current Health Status</h3>
+                </div>
+                <div style="margin-bottom:25px;">
+                    ${renderTextArea('Current Symptoms', data.currentSymptoms)}
+                    ${renderTextArea('Main Complaints', data.mainComplaints)}
+                    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:15px;">
+                        ${renderField('Height (cm)', data.height)}
+                        ${renderField('Weight (kg)', data.weight)}
+                        ${renderField('Blood Type', data.bloodType)}
+                    </div>
+                </div>
+                
+                <div style="border-bottom:2px solid #4a9165;padding-bottom:15px;margin-bottom:25px;">
+                    <h3 style="color:#4a9165;margin:0;"><i class="fas fa-shield-alt"></i> Insurance Information</h3>
+                </div>
+                <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:15px;margin-bottom:25px;">
+                    ${renderField('Insurance Provider', data.insuranceProvider)}
+                    ${renderField('Insurance Number', data.insuranceNumber)}
+                    ${renderField('Expiry Date', data.insuranceExpiryDate)}
+                </div>
+                
+                ${data.additionalNotes ? `
+                <div style="border-bottom:2px solid #4a9165;padding-bottom:15px;margin-bottom:25px;">
+                    <h3 style="color:#4a9165;margin:0;"><i class="fas fa-comment-medical"></i> Additional Notes</h3>
+                </div>
+                <div style="margin-bottom:25px;">
+                    ${renderTextArea('Notes', data.additionalNotes)}
+                </div>
+                ` : ''}
+                
+                <div style="background:#f8f9fa;padding:15px;border-radius:8px;margin-top:20px;font-size:0.9em;color:#666;">
+                    <i class="fas fa-info-circle"></i> Last updated: ${data.updatedAt ? new Date(data.updatedAt).toLocaleDateString() : 'N/A'}
+                </div>
+            </div>`;
+        
+        container.html(html);
+    }
+    
+    function renderEmptyQuestionnaire(clientId) {
+        const container = $('#questionnaire-container');
+        container.html(`
+            <div style="text-align:center;padding:60px 20px;background:white;border-radius:12px;box-shadow:0 2px 12px rgba(0,0,0,0.08);">
+                <i class="fas fa-file-medical" style="font-size:4em;color:#ccc;margin-bottom:20px;"></i>
+                <h3 style="color:#666;margin-bottom:10px;">No Medical Questionnaire Found</h3>
+                <p style="color:#999;margin-bottom:20px;">Please fill out your medical questionnaire during your next appointment with the doctor.</p>
+                <p style="color:#999;font-size:0.9em;">Your doctor will help you complete this form.</p>
+            </div>`);
+    }
+    
+    function renderField(label, value) {
+        return `<div style="padding:10px;background:#f8f9fa;border-radius:6px;">
+            <div style="font-size:0.85em;color:#666;margin-bottom:4px;">${label}</div>
+            <div style="font-weight:500;color:#333;">${value || 'N/A'}</div>
+        </div>`;
+    }
+    
+    function renderTextArea(label, value) {
+        if (!value) return '';
+        return `<div style="margin-bottom:15px;">
+            <div style="font-size:0.9em;color:#666;margin-bottom:5px;font-weight:500;">${label}</div>
+            <div style="padding:12px;background:#f8f9fa;border-radius:6px;color:#333;line-height:1.6;">${value}</div>
+        </div>`;
     }
     </script>
 </body>

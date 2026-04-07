@@ -9,6 +9,7 @@ import com.medvisit.MedVisit.service.EmployeeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -51,6 +52,21 @@ public class EmployeeServiceImpl implements EmployeeService {
     @Override
     public void delete(Long id) {
         employeeRepository.deleteById(id);
+    }
+
+    @Override
+    public List<EmployeeDto> findBySpecialization(String specialization) {
+        return employeeRepository.findBySpecializationContainingIgnoreCase(specialization).stream()
+                .map(this::toDto)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<EmployeeDto> findAvailableBySpecialtyAndDate(String specialty, LocalDate date) {
+        // Find employees with matching specialty who have schedules on the given date
+        return employeeRepository.findEmployeesBySpecialtyAndDate(specialty, date).stream()
+                .map(this::toDto)
+                .collect(Collectors.toList());
     }
 
     private void copyDtoToEntity(EmployeeDto dto, Employee employee) {

@@ -98,6 +98,18 @@
             .dashboard-nav { overflow-x: auto; }
             .dashboard-nav a { white-space: nowrap; padding: 12px 16px; }
         }
+        
+        /* Modal */
+        .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); display: none; align-items: center; justify-content: center; z-index: 1000; }
+        .modal-overlay.active { display: flex; }
+        .modal-box { background: white; border-radius: 16px; padding: 30px; max-width: 500px; width: 90%; position: relative; animation: zoomIn 0.3s; }
+        @keyframes zoomIn { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
+        .modal-close { position: absolute; top: 15px; right: 20px; font-size: 1.5em; border: none; background: none; cursor: pointer; color: #999; }
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; margin-bottom: 5px; color: #555; font-weight: 500; }
+        .form-group input, .form-group textarea, .form-group select { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; font-size: 0.95em; }
+        .submit-btn { background: #4a9165; color: white; border: none; padding: 12px 30px; border-radius: 8px; cursor: pointer; font-size: 1em; transition: all 0.3s; width: 100%; }
+        .submit-btn:hover { background: #3d7a55; }
     </style>
 </head>
 <body>
@@ -115,6 +127,7 @@
         <a href="#" data-tab="schedule"><i class="fas fa-calendar-alt"></i> My Schedule</a>
         <a href="#" data-tab="appointments"><i class="fas fa-clipboard-list"></i> Patient Appointments</a>
         <a href="#" data-tab="patients"><i class="fas fa-users"></i> My Patients</a>
+        <a href="#" data-tab="questionnaire"><i class="fas fa-file-medical"></i> Medical Forms</a>
     </div>
 
     <div class="dashboard-content">
@@ -158,6 +171,14 @@
         <!-- Schedule Tab -->
         <div class="tab-content" id="tab-schedule">
             <h2 class="section-title"><i class="fas fa-calendar-alt"></i> My Schedule</h2>
+            
+            <!-- Bulk Schedule Creation Button -->
+            <div style="margin-bottom:20px;">
+                <button id="btn-bulk-schedule" class="submit-btn" style="width:auto;padding:12px 24px;background:#4a9165;color:white;border:none;border-radius:8px;font-size:1em;cursor:pointer;transition:all 0.3s;">
+                    <i class="fas fa-calendar-plus"></i> Create Monthly Schedule
+                </button>
+            </div>
+            
             <div id="schedule-list">
                 <div class="empty-state"><i class="fas fa-spinner fa-spin"></i><p>Loading schedule...</p></div>
             </div>
@@ -205,6 +226,134 @@
                 </table>
             </div>
         </div>
+
+        <!-- Medical Forms Tab -->
+        <div class="tab-content" id="tab-questionnaire">
+            <h2 class="section-title"><i class="fas fa-file-medical"></i> Patient Medical Forms</h2>
+            
+            <!-- Patient Selection -->
+            <div style="background:white;border-radius:12px;padding:20px;margin-bottom:20px;box-shadow:0 2px 12px rgba(0,0,0,0.08);">
+                <label style="display:block;margin-bottom:8px;color:#333;font-weight:600;">Select Patient:</label>
+                <select id="questionnaire-patient-select" style="width:100%;padding:12px;border:2px solid #e0e0e0;border-radius:8px;font-size:1em;">
+                    <option value="">-- Choose a patient --</option>
+                </select>
+            </div>
+
+            <!-- Questionnaire Container -->
+            <div id="doctor-questionnaire-container">
+                <div class="empty-state">
+                    <i class="fas fa-file-medical"></i>
+                    <p>Select a patient to view or edit their medical form</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bulk Schedule Creation Modal -->
+    <div class="modal-overlay" id="bulk-schedule-modal">
+        <div class="modal-box animate__animated animate__zoomIn" style="max-width:600px;">
+            <button class="modal-close" id="close-bulk-schedule">&times;</button>
+            <h2><i class="fas fa-calendar-plus"></i> Create Monthly Schedule</h2>
+            <form id="bulk-schedule-form">
+                <div class="form-group">
+                    <label>Date Range</label>
+                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:15px;">
+                        <div>
+                            <label style="font-size:0.9em;color:#666;">Start Date</label>
+                            <input type="date" id="bulk-start-date" required>
+                        </div>
+                        <div>
+                            <label style="font-size:0.9em;color:#666;">End Date</label>
+                            <input type="date" id="bulk-end-date" required>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label>Working Hours</label>
+                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:15px;">
+                        <div>
+                            <label style="font-size:0.9em;color:#666;">Start Time</label>
+                            <input type="time" id="bulk-start-time" value="09:00" required>
+                        </div>
+                        <div>
+                            <label style="font-size:0.9em;color:#666;">End Time</label>
+                            <input type="time" id="bulk-end-time" value="17:00" required>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label>Days of Week (leave empty for all days)</label>
+                    <div style="display:grid;grid-template-columns:repeat(4, 1fr);gap:10px;margin-top:8px;">
+                        <label style="display:flex;align-items:center;gap:5px;cursor:pointer;">
+                            <input type="checkbox" name="dayOfWeek" value="MONDAY" style="width:18px;height:18px;">
+                            Mon
+                        </label>
+                        <label style="display:flex;align-items:center;gap:5px;cursor:pointer;">
+                            <input type="checkbox" name="dayOfWeek" value="TUESDAY" style="width:18px;height:18px;">
+                            Tue
+                        </label>
+                        <label style="display:flex;align-items:center;gap:5px;cursor:pointer;">
+                            <input type="checkbox" name="dayOfWeek" value="WEDNESDAY" style="width:18px;height:18px;">
+                            Wed
+                        </label>
+                        <label style="display:flex;align-items:center;gap:5px;cursor:pointer;">
+                            <input type="checkbox" name="dayOfWeek" value="THURSDAY" style="width:18px;height:18px;">
+                            Thu
+                        </label>
+                        <label style="display:flex;align-items:center;gap:5px;cursor:pointer;">
+                            <input type="checkbox" name="dayOfWeek" value="FRIDAY" style="width:18px;height:18px;">
+                            Fri
+                        </label>
+                        <label style="display:flex;align-items:center;gap:5px;cursor:pointer;">
+                            <input type="checkbox" name="dayOfWeek" value="SATURDAY" style="width:18px;height:18px;">
+                            Sat
+                        </label>
+                        <label style="display:flex;align-items:center;gap:5px;cursor:pointer;">
+                            <input type="checkbox" name="dayOfWeek" value="SUNDAY" style="width:18px;height:18px;">
+                            Sun
+                        </label>
+                    </div>
+                </div>
+                
+                <div style="padding:15px;background:#f5faf7;border-left:4px solid #4a9165;border-radius:8px;margin-bottom:20px;">
+                    <p style="margin:0;color:#4a9165;font-size:0.95em;"><i class="fas fa-info-circle"></i> This will create schedules for each selected day within the date range. Existing schedules will not be duplicated.</p>
+                </div>
+                
+                <button type="submit" class="submit-btn"><i class="fas fa-plus-circle"></i> Create Schedules</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Send Notification Modal -->
+    <div class="modal-overlay" id="notification-modal">
+        <div class="modal-box animate__animated animate__zoomIn">
+            <button class="modal-close" id="close-notification">&times;</button>
+            <h2><i class="fas fa-bell"></i> Send Notification to Patient</h2>
+            <form id="notification-form">
+                <input type="hidden" id="notif-patient-id">
+                <input type="hidden" id="notif-visit-id">
+                <div class="form-group">
+                    <label>Patient</label>
+                    <input type="text" id="notif-patient-name" readonly>
+                </div>
+                <div class="form-group">
+                    <label>Message</label>
+                    <textarea id="notif-message" rows="4" placeholder="Enter your message..." required></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Type</label>
+                    <select id="notif-type">
+                        <option value="REMINDER">Appointment Reminder</option>
+                        <option value="FOLLOWUP">Follow-up</option>
+                        <option value="GENERAL">General Message</option>
+                        <option value="INSTRUCTION">Medical Instruction</option>
+                    </select>
+                </div>
+                <button type="submit" class="submit-btn"><i class="fas fa-paper-plane"></i> Send Notification</button>
+            </form>
+        </div>
     </div>
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -225,7 +374,19 @@
             $('.dashboard-nav a').removeClass('active');
             $(this).addClass('active');
             $('.tab-content').removeClass('active');
-            $('#tab-' + $(this).data('tab')).addClass('active');
+            const tabName = $(this).data('tab');
+            $('#tab-' + tabName).addClass('active');
+            
+            // Load questionnaire data when tab is activated
+            if (tabName === 'questionnaire') {
+                loadDoctorQuestionnaireTab();
+            }
+        });
+        
+        // Questionnaire patient selection change
+        $(document).on('change', '#questionnaire-patient-select', function() {
+            const clientId = $(this).val();
+            loadQuestionnaireForPatient(clientId);
         });
     });
 
@@ -292,33 +453,67 @@
         if (!myEmployee) return;
         const container = $('#schedule-list');
         const mySchedules = allSchedules.filter(s => s.employeeId === myEmployee.employeeId);
+        
         if (!mySchedules.length) {
             container.html('<div class="empty-state"><i class="fas fa-calendar-times"></i><p>No schedule set</p></div>');
             return;
         }
+        
+        // Group schedules by month
+        const schedulesByMonth = {};
         mySchedules.sort((a, b) => new Date(a.date) - new Date(b.date));
-        let html = '';
+        
         mySchedules.forEach(s => {
-            html += `
-                <div class="schedule-card animate__animated animate__fadeIn">
-                    <div>
-                        <div class="sch-date"><i class="fas fa-calendar-day"></i> ${s.date}</div>
-                    </div>
-                    <div class="sch-time"><i class="fas fa-clock"></i> ${s.startTime} - ${s.endTime}</div>
-                </div>`;
+            const dateObj = new Date(s.date);
+            const monthKey = `${dateObj.getFullYear()}-${String(dateObj.getMonth() + 1).padStart(2, '0')}`;
+            const monthName = dateObj.toLocaleDateString('en-US', { year: 'numeric', month: 'long' });
+            
+            if (!schedulesByMonth[monthKey]) {
+                schedulesByMonth[monthKey] = { name: monthName, dates: [] };
+            }
+            schedulesByMonth[monthKey].dates.push(s);
         });
+        
+        let html = '';
+        Object.values(schedulesByMonth).forEach(month => {
+            html += `<h3 style="color:#4a9165;margin:20px 0 10px;border-bottom:2px solid #e8f5e9;padding-bottom:10px;">${month.name}</h3>`;
+            html += `<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;">`;
+            
+            month.dates.forEach(s => {
+                const dateObj = new Date(s.date);
+                const dayName = dateObj.toLocaleDateString('en-US', { weekday: 'short' });
+                const dayNum = dateObj.toLocaleDateString('en-US', { day: 'numeric' });
+                
+                html += `
+                    <div class="schedule-card animate__animated animate__fadeIn" style="margin:0;text-align:center;">
+                        <div style="background:#e8f5e9;padding:8px;border-radius:8px;margin-bottom:8px;">
+                            <div style="font-size:0.85em;color:#666;">${dayName}</div>
+                            <div style="font-size:1.3em;font-weight:700;color:#4a9165;">${dayNum}</div>
+                        </div>
+                        <div class="sch-time" style="display:inline-block;"><i class="fas fa-clock"></i> ${s.startTime} - ${s.endTime}</div>
+                    </div>`;
+            });
+            
+            html += `</div>`;
+        });
+        
         container.html(html);
     }
 
     function renderAppointments() {
         if (!myEmployee) return;
         const tbody = $('#doc-visits-list');
+        // Get ALL visits for this doctor - don't filter by status
         const myVisits = allVisits.filter(v => v.employeeId === myEmployee.employeeId);
+        
         if (!myVisits.length) {
-            tbody.html('<tr><td colspan="6"><div class="empty-state"><i class="fas fa-clipboard"></i><p>No appointments</p></div></td></tr>');
+            tbody.html('<tr><td colspan="7"><div class="empty-state"><i class="fas fa-clipboard"></i><p>No appointments yet</p></div></td></tr>');
             return;
         }
+        
+        // Sort by date (newest first)
         myVisits.sort((a, b) => new Date(b.visitDateTime) - new Date(a.visitDateTime));
+        
         let html = '';
         myVisits.forEach(v => {
             const client = allClients.find(c => c.clientId === v.clientId);
@@ -334,7 +529,8 @@
                     <td><span class="status-badge ${statusClass}">${escapeHtml(v.status || 'SCHEDULED')}</span></td>
                     <td>${escapeHtml(v.notes || '-')}</td>
                     <td>
-                        ${v.status !== 'COMPLETED' ? `<button class="action-btn" onclick="updateVisitStatus(${v.visitId}, 'COMPLETED')" style="background:#2e7d32;color:white;border:none;padding:6px 12px;border-radius:6px;cursor:pointer;font-size:0.85em;">Complete</button>` : ''}
+                        ${v.status !== 'COMPLETED' && v.status !== 'CANCELLED' ? `<button class="action-btn" onclick="updateVisitStatus(${v.visitId}, 'COMPLETED')" style="background:#2e7d32;color:white;border:none;padding:6px 12px;border-radius:6px;cursor:pointer;font-size:0.85em;margin-right:5px;">Complete</button>` : ''}
+                        <button class="action-btn" onclick="openNotificationModal(${v.visitId}, '${escapeHtml(clientName)}')" style="background:#4a9165;color:white;border:none;padding:6px 12px;border-radius:6px;cursor:pointer;font-size:0.85em;"><i class="fas fa-bell"></i> Notify</button>
                     </td>
                 </tr>`;
         });
@@ -394,6 +590,549 @@
         const d = new Date(dt);
         return d.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }) +
                ' ' + d.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+    }
+    
+    // === NOTIFICATION FUNCTIONS ===
+    
+    $(document).ready(function() {
+        $('#close-notification').click(() => {
+            $('#notification-modal').removeClass('active');
+        });
+        $('#notification-modal').click(function(e) {
+            if (e.target === this) $(this).removeClass('active');
+        });
+        $('#notification-form').submit(function(e) {
+            e.preventDefault();
+            sendNotification();
+        });
+        
+        // Bulk Schedule Modal Handlers
+        $('#btn-bulk-schedule').click(function() {
+            // Set default dates (start of current month to end of next month)
+            const today = new Date();
+            const startOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+            const endOfNextMonth = new Date(today.getFullYear(), today.getMonth() + 2, 0);
+            
+            $('#bulk-start-date').val(startOfMonth.toISOString().split('T')[0]);
+            $('#bulk-end-date').val(endOfNextMonth.toISOString().split('T')[0]);
+            $('#bulk-schedule-modal').addClass('active');
+        });
+        
+        $('#close-bulk-schedule').click(() => {
+            $('#bulk-schedule-modal').removeClass('active');
+        });
+        
+        $('#bulk-schedule-modal').click(function(e) {
+            if (e.target === this) $(this).removeClass('active');
+        });
+        
+        $('#bulk-schedule-form').submit(function(e) {
+            e.preventDefault();
+            createBulkSchedule();
+        });
+    });
+    
+    function openNotificationModal(visitId, patientName) {
+        const visit = allVisits.find(v => v.visitId === visitId);
+        if (!visit) return;
+        
+        $('#notif-patient-id').val(visit.clientId);
+        $('#notif-visit-id').val(visitId);
+        $('#notif-patient-name').val(patientName);
+        $('#notif-message').val('');
+        
+        $('#notification-modal').addClass('active');
+    }
+    
+    function sendNotification() {
+        const visitId = parseInt($('#notif-visit-id').val());
+        const message = $('#notif-message').val();
+        const type = $('#notif-type').val();
+        
+        if (!message.trim()) {
+            alert('Please enter a message');
+            return;
+        }
+        
+        // Find the visit to get patient info
+        const visit = allVisits.find(v => v.visitId === visitId);
+        if (!visit) {
+            alert('Visit not found');
+            return;
+        }
+        
+        // Find client
+        const client = allClients.find(c => c.clientId === visit.clientId);
+        if (!client) {
+            alert('Patient not found');
+            return;
+        }
+        
+        // Try to find user by matching username with client email or phone
+        // In production, you should have a direct client-user relationship
+        $.get(API + '/api/users')
+            .done(function(users) {
+                // Try multiple matching strategies
+                const patientUser = users.find(u => 
+                    u.username === client.email || 
+                    u.username === client.phone ||
+                    (client.firstName && u.username.toLowerCase().includes(client.firstName.toLowerCase())) ||
+                    (client.lastName && u.username.toLowerCase().includes(client.lastName.toLowerCase()))
+                );
+                
+                if (!patientUser) {
+                    // Fallback: use first CLIENT role user
+                    const clientUser = users.find(u => u.role === 'CLIENT');
+                    if (clientUser) {
+                        sendNotificationRequest(clientUser.userId, message, type, visitId);
+                    } else {
+                        alert('Could not find user account for this patient. Please ensure the patient has a registered account with matching email or phone.');
+                    }
+                    return;
+                }
+                
+                sendNotificationRequest(patientUser.userId, message, type, visitId);
+            })
+            .fail(function() {
+                alert('Could not load users list.');
+            });
+    }
+    
+    function sendNotificationRequest(userId, message, type, visitId) {
+        const notificationData = {
+            message: message,
+            type: type,
+            recipientId: userId,
+            senderId: currentUser ? currentUser.userId : null,
+            visitId: visitId
+        };
+        
+        $.ajax({
+            url: API + '/api/notifications/send-to-patient',
+            method: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify(notificationData)
+        }).done(function() {
+            $('#notification-modal').removeClass('active');
+            alert('Notification sent successfully!');
+        }).fail(function(err) {
+            console.error('Error sending notification:', err);
+            alert('Failed to send notification. Please try again.');
+        });
+    }
+
+    // Bulk Schedule Creation Function
+    function createBulkSchedule() {
+        if (!currentUser || !myEmployee) {
+            alert('Doctor profile not loaded. Please refresh the page.');
+            return;
+        }
+        
+        const startDate = $('#bulk-start-date').val();
+        const endDate = $('#bulk-end-date').val();
+        const startTime = $('#bulk-start-time').val();
+        const endTime = $('#bulk-end-time').val();
+        
+        // Get selected days of week
+        const daysOfWeek = [];
+        $('input[name="dayOfWeek"]:checked').each(function() {
+            daysOfWeek.push($(this).val());
+        });
+        
+        if (!startDate || !endDate || !startTime || !endTime) {
+            alert('Please fill in all required fields.');
+            return;
+        }
+        
+        const requestData = {
+            employeeId: myEmployee.employeeId,
+            startDate: startDate,
+            endDate: endDate,
+            startTime: startTime,
+            endTime: endTime,
+            daysOfWeek: daysOfWeek.length > 0 ? daysOfWeek : null
+        };
+        
+        $.ajax({
+            url: API + '/api/schedules/bulk-monthly',
+            method: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify(requestData)
+        })
+        .done(function(result) {
+            $('#bulk-schedule-modal').removeClass('active');
+            alert(`Successfully created ${result.length} schedule(s)!`);
+            loadMySchedules(); // Reload schedules
+        })
+        .fail(function(xhr) {
+            console.error('Bulk schedule creation failed:', xhr.responseText);
+            alert('Failed to create schedules: ' + (xhr.responseText || 'Unknown error'));
+        });
+    }
+
+    // Medical Questionnaire Functions
+    let allClientsForQuestionnaire = [];
+
+    function loadDoctorQuestionnaireTab() {
+        // Load all clients for patient selection
+        $.get(API + '/api/clients')
+            .done(function(clients) {
+                allClientsForQuestionnaire = clients;
+                renderPatientSelect(clients);
+            })
+            .fail(function() {
+                console.error('Failed to load clients');
+            });
+    }
+
+    function renderPatientSelect(clients) {
+        const select = $('#questionnaire-patient-select');
+        let html = '<option value="">-- Choose a patient --</option>';
+        
+        clients.forEach(client => {
+            const name = client.firstName && client.lastName 
+                ? `${client.firstName} ${client.lastName}` 
+                : (client.fullName || client.email);
+            html += `<option value="${client.clientId}">${name}</option>`;
+        });
+        
+        select.html(html);
+    }
+
+    function loadQuestionnaireForPatient(clientId) {
+        if (!clientId) {
+            $('#doctor-questionnaire-container').html(`
+                <div class="empty-state">
+                    <i class="fas fa-file-medical"></i>
+                    <p>Select a patient to view or edit their medical form</p>
+                </div>
+            `);
+            return;
+        }
+
+        $.get(API + '/api/questionnaires/client/' + clientId)
+            .done(function(questionnaire) {
+                if (questionnaire) {
+                    renderEditableQuestionnaire(questionnaire, true);
+                } else {
+                    renderNewQuestionnaireForm(clientId);
+                }
+            })
+            .fail(function(err) {
+                console.error('Failed to load questionnaire:', err);
+                alert('Failed to load medical form');
+            });
+    }
+
+    function renderEditableQuestionnaire(data, isEditable) {
+        const container = $('#doctor-questionnaire-container');
+        
+        let html = `
+            <div style="background:white;border-radius:12px;padding:30px;box-shadow:0 2px 12px rgba(0,0,0,0.08);">
+                <form id="questionnaire-form" data-questionnaire-id="${data.questionnaireId}">
+                    <!-- Personal Information -->
+                    <div style="border-bottom:2px solid #4a9165;padding-bottom:15px;margin-bottom:25px;">
+                        <h3 style="color:#4a9165;margin:0;"><i class="fas fa-user-circle"></i> Personal Information</h3>
+                    </div>
+                    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:15px;margin-bottom:25px;">
+                        ${renderInputField('Full Name', 'fullName', data.fullName)}
+                        ${renderDateField('Date of Birth', 'dateOfBirth', data.dateOfBirth)}
+                        ${renderSelectField('Gender', 'gender', data.gender, ['Male', 'Female', 'Other'])}
+                    </div>
+
+                    <!-- Emergency Contact -->
+                    <div style="border-bottom:2px solid #4a9165;padding-bottom:15px;margin-bottom:25px;">
+                        <h3 style="color:#4a9165;margin:0;"><i class="fas fa-phone-alt"></i> Emergency Contact</h3>
+                    </div>
+                    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:15px;margin-bottom:25px;">
+                        ${renderInputField('Contact Name', 'emergencyContactName', data.emergencyContactName)}
+                        ${renderInputField('Contact Phone', 'emergencyContactPhone', data.emergencyContactPhone)}
+                        ${renderInputField('Relationship', 'emergencyContactRelation', data.emergencyContactRelation)}
+                    </div>
+
+                    <!-- Medical History -->
+                    <div style="border-bottom:2px solid #4a9165;padding-bottom:15px;margin-bottom:25px;">
+                        <h3 style="color:#4a9165;margin:0;"><i class="fas fa-notes-medical"></i> Medical History</h3>
+                    </div>
+                    <div style="display:grid;gap:15px;margin-bottom:25px;">
+                        ${renderTextArea('Chronic Diseases / Conditions', 'chronicDiseases', data.chronicDiseases, 'Diabetes, Hypertension, Asthma, etc.')}
+                        ${renderTextArea('Previous Surgeries', 'previousSurgeries', data.previousSurgeries, 'List any surgeries with approximate dates')}
+                        ${renderTextArea('Allergies', 'allergies', data.allergies, 'Medications, food, environmental allergies')}
+                        ${renderTextArea('Current Medications', 'currentMedications', data.currentMedications, 'Include dosage and frequency')}
+                        ${renderTextArea('Family Medical History', 'familyMedicalHistory', data.familyMedicalHistory, 'Parents, siblings, grandparents health conditions')}
+                    </div>
+
+                    <!-- Lifestyle -->
+                    <div style="border-bottom:2px solid #4a9165;padding-bottom:15px;margin-bottom:25px;">
+                        <h3 style="color:#4a9165;margin:0;"><i class="fas fa-heartbeat"></i> Lifestyle</h3>
+                    </div>
+                    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:15px;margin-bottom:25px;">
+                        ${renderCheckboxField('Smokes', 'smokes', data.smokes)}
+                        ${renderCheckboxField('Drinks Alcohol', 'drinksAlcohol', data.drinksAlcohol)}
+                        ${renderCheckboxField('Exercises Regularly', 'exercises', data.exercises)}
+                    </div>
+
+                    <!-- Current Health Status -->
+                    <div style="border-bottom:2px solid #4a9165;padding-bottom:15px;margin-bottom:25px;">
+                        <h3 style="color:#4a9165;margin:0;"><i class="fas fa-stethoscope"></i> Current Health Status</h3>
+                    </div>
+                    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:15px;margin-bottom:25px;">
+                        ${renderNumberField('Height (cm)', 'height', data.height)}
+                        ${renderNumberField('Weight (kg)', 'weight', data.weight)}
+                        ${renderSelectField('Blood Type', 'bloodType', data.bloodType, ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-', 'Unknown'])}
+                    </div>
+
+                    <!-- Insurance Information -->
+                    <div style="border-bottom:2px solid #4a9165;padding-bottom:15px;margin-bottom:25px;">
+                        <h3 style="color:#4a9165;margin:0;"><i class="fas fa-shield-alt"></i> Insurance Information</h3>
+                    </div>
+                    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:15px;margin-bottom:25px;">
+                        ${renderInputField('Insurance Provider', 'insuranceProvider', data.insuranceProvider)}
+                        ${renderInputField('Policy Number', 'policyNumber', data.policyNumber)}
+                        ${renderInputField('Group Number', 'groupNumber', data.groupNumber)}
+                    </div>
+
+                    <!-- Additional Notes -->
+                    <div style="border-bottom:2px solid #4a9165;padding-bottom:15px;margin-bottom:25px;">
+                        <h3 style="color:#4a9165;margin:0;"><i class="fas fa-comment-medical"></i> Additional Notes</h3>
+                    </div>
+                    <div style="margin-bottom:25px;">
+                        ${renderTextArea('Additional Notes', 'additionalNotes', data.additionalNotes, 'Any other relevant medical information')}
+                    </div>
+
+                    <button type="submit" class="submit-btn" style="width:auto;padding:12px 30px;background:#4a9165;color:white;border:none;border-radius:8px;font-size:1em;cursor:pointer;transition:all 0.3s;">
+                        <i class="fas fa-save"></i> Save Medical Form
+                    </button>
+                </form>
+            </div>`;
+        
+        container.html(html);
+
+        // Attach form submit handler
+        $('#questionnaire-form').on('submit', function(e) {
+            e.preventDefault();
+            saveQuestionnaire(data.questionnaireId);
+        });
+    }
+
+    function renderNewQuestionnaireForm(clientId) {
+        const container = $('#doctor-questionnaire-container');
+        
+        let html = `
+            <div style="background:white;border-radius:12px;padding:30px;box-shadow:0 2px 12px rgba(0,0,0,0.08);">
+                <div style="padding:20px;background:#f5faf7;border-left:4px solid #4a9165;margin-bottom:25px;border-radius:8px;">
+                    <p style="margin:0;color:#4a9165;"><i class="fas fa-info-circle"></i> No medical form exists for this patient yet. Create one now.</p>
+                </div>
+                <form id="questionnaire-form" data-client-id="${clientId}">
+                    <!-- Personal Information -->
+                    <div style="border-bottom:2px solid #4a9165;padding-bottom:15px;margin-bottom:25px;">
+                        <h3 style="color:#4a9165;margin:0;"><i class="fas fa-user-circle"></i> Personal Information</h3>
+                    </div>
+                    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:15px;margin-bottom:25px;">
+                        ${renderInputField('Full Name', 'fullName', '')}
+                        ${renderDateField('Date of Birth', 'dateOfBirth', '')}
+                        ${renderSelectField('Gender', 'gender', '', ['Male', 'Female', 'Other'])}
+                    </div>
+
+                    <!-- Emergency Contact -->
+                    <div style="border-bottom:2px solid #4a9165;padding-bottom:15px;margin-bottom:25px;">
+                        <h3 style="color:#4a9165;margin:0;"><i class="fas fa-phone-alt"></i> Emergency Contact</h3>
+                    </div>
+                    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:15px;margin-bottom:25px;">
+                        ${renderInputField('Contact Name', 'emergencyContactName', '')}
+                        ${renderInputField('Contact Phone', 'emergencyContactPhone', '')}
+                        ${renderInputField('Relationship', 'emergencyContactRelation', '')}
+                    </div>
+
+                    <!-- Medical History -->
+                    <div style="border-bottom:2px solid #4a9165;padding-bottom:15px;margin-bottom:25px;">
+                        <h3 style="color:#4a9165;margin:0;"><i class="fas fa-notes-medical"></i> Medical History</h3>
+                    </div>
+                    <div style="display:grid;gap:15px;margin-bottom:25px;">
+                        ${renderTextArea('Chronic Diseases / Conditions', 'chronicDiseases', '', 'Diabetes, Hypertension, Asthma, etc.')}
+                        ${renderTextArea('Previous Surgeries', 'previousSurgeries', '', 'List any surgeries with approximate dates')}
+                        ${renderTextArea('Allergies', 'allergies', '', 'Medications, food, environmental allergies')}
+                        ${renderTextArea('Current Medications', 'currentMedications', '', 'Include dosage and frequency')}
+                        ${renderTextArea('Family Medical History', 'familyMedicalHistory', '', 'Parents, siblings, grandparents health conditions')}
+                    </div>
+
+                    <!-- Lifestyle -->
+                    <div style="border-bottom:2px solid #4a9165;padding-bottom:15px;margin-bottom:25px;">
+                        <h3 style="color:#4a9165;margin:0;"><i class="fas fa-heartbeat"></i> Lifestyle</h3>
+                    </div>
+                    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:15px;margin-bottom:25px;">
+                        ${renderCheckboxField('Smokes', 'smokes', false)}
+                        ${renderCheckboxField('Drinks Alcohol', 'drinksAlcohol', false)}
+                        ${renderCheckboxField('Exercises Regularly', 'exercises', false)}
+                    </div>
+
+                    <!-- Current Health Status -->
+                    <div style="border-bottom:2px solid #4a9165;padding-bottom:15px;margin-bottom:25px;">
+                        <h3 style="color:#4a9165;margin:0;"><i class="fas fa-stethoscope"></i> Current Health Status</h3>
+                    </div>
+                    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:15px;margin-bottom:25px;">
+                        ${renderNumberField('Height (cm)', 'height', '')}
+                        ${renderNumberField('Weight (kg)', 'weight', '')}
+                        ${renderSelectField('Blood Type', 'bloodType', '', ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-', 'Unknown'])}
+                    </div>
+
+                    <!-- Insurance Information -->
+                    <div style="border-bottom:2px solid #4a9165;padding-bottom:15px;margin-bottom:25px;">
+                        <h3 style="color:#4a9165;margin:0;"><i class="fas fa-shield-alt"></i> Insurance Information</h3>
+                    </div>
+                    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:15px;margin-bottom:25px;">
+                        ${renderInputField('Insurance Provider', 'insuranceProvider', '')}
+                        ${renderInputField('Policy Number', 'policyNumber', '')}
+                        ${renderInputField('Group Number', 'groupNumber', '')}
+                    </div>
+
+                    <!-- Additional Notes -->
+                    <div style="border-bottom:2px solid #4a9165;padding-bottom:15px;margin-bottom:25px;">
+                        <h3 style="color:#4a9165;margin:0;"><i class="fas fa-comment-medical"></i> Additional Notes</h3>
+                    </div>
+                    <div style="margin-bottom:25px;">
+                        ${renderTextArea('Additional Notes', 'additionalNotes', '', 'Any other relevant medical information')}
+                    </div>
+
+                    <button type="submit" class="submit-btn" style="width:auto;padding:12px 30px;background:#4a9165;color:white;border:none;border-radius:8px;font-size:1em;cursor:pointer;transition:all 0.3s;">
+                        <i class="fas fa-plus-circle"></i> Create Medical Form
+                    </button>
+                </form>
+            </div>`;
+        
+        container.html(html);
+
+        // Attach form submit handler
+        $('#questionnaire-form').on('submit', function(e) {
+            e.preventDefault();
+            createQuestionnaire(clientId);
+        });
+    }
+
+    function renderInputField(label, name, value) {
+        return `
+            <div>
+                <label style="display:block;margin-bottom:6px;color:#555;font-weight:500;">${label}</label>
+                <input type="text" name="${name}" value="${value || ''}" 
+                    style="width:100%;padding:10px;border:2px solid #e0e0e0;border-radius:8px;font-size:0.95em;">
+            </div>`;
+    }
+
+    function renderDateField(label, name, value) {
+        return `
+            <div>
+                <label style="display:block;margin-bottom:6px;color:#555;font-weight:500;">${label}</label>
+                <input type="date" name="${name}" value="${value || ''}" 
+                    style="width:100%;padding:10px;border:2px solid #e0e0e0;border-radius:8px;font-size:0.95em;">
+            </div>`;
+    }
+
+    function renderNumberField(label, name, value) {
+        return `
+            <div>
+                <label style="display:block;margin-bottom:6px;color:#555;font-weight:500;">${label}</label>
+                <input type="number" step="0.1" name="${name}" value="${value || ''}" 
+                    style="width:100%;padding:10px;border:2px solid #e0e0e0;border-radius:8px;font-size:0.95em;">
+            </div>`;
+    }
+
+    function renderSelectField(label, name, value, options) {
+        let optsHtml = '<option value="">-- Select --</option>';
+        options.forEach(opt => {
+            const selected = value === opt ? 'selected' : '';
+            optsHtml += `<option value="${opt}" ${selected}>${opt}</option>`;
+        });
+        return `
+            <div>
+                <label style="display:block;margin-bottom:6px;color:#555;font-weight:500;">${label}</label>
+                <select name="${name}" style="width:100%;padding:10px;border:2px solid #e0e0e0;border-radius:8px;font-size:0.95em;">
+                    ${optsHtml}
+                </select>
+            </div>`;
+    }
+
+    function renderCheckboxField(label, name, checked) {
+        const isChecked = checked ? 'checked' : '';
+        return `
+            <div style="display:flex;align-items:center;gap:10px;">
+                <input type="checkbox" id="${name}" name="${name}" ${isChecked} 
+                    style="width:20px;height:20px;cursor:pointer;">
+                <label for="${name}" style="color:#555;font-weight:500;cursor:pointer;">${label}</label>
+            </div>`;
+    }
+
+    function renderTextArea(label, name, value, placeholder) {
+        return `
+            <div>
+                <label style="display:block;margin-bottom:6px;color:#555;font-weight:500;">${label}</label>
+                <textarea name="${name}" rows="3" placeholder="${placeholder}" 
+                    style="width:100%;padding:10px;border:2px solid #e0e0e0;border-radius:8px;font-size:0.95em;resize:vertical;">${value || ''}</textarea>
+            </div>`;
+    }
+
+    function saveQuestionnaire(questionnaireId) {
+        const formData = collectFormData();
+        
+        $.ajax({
+            url: API + '/api/questionnaires/' + questionnaireId,
+            method: 'PUT',
+            contentType: 'application/json',
+            data: JSON.stringify(formData)
+        })
+        .done(function(result) {
+            alert('Medical form updated successfully!');
+            renderEditableQuestionnaire(result, true);
+        })
+        .fail(function(xhr) {
+            console.error('Update failed:', xhr.responseText);
+            alert('Failed to update medical form: ' + (xhr.responseText || 'Unknown error'));
+        });
+    }
+
+    function createQuestionnaire(clientId) {
+        const formData = collectFormData();
+        formData.clientId = clientId;
+        
+        $.ajax({
+            url: API + '/api/questionnaires',
+            method: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify(formData)
+        })
+        .done(function(result) {
+            alert('Medical form created successfully!');
+            renderEditableQuestionnaire(result, true);
+        })
+        .fail(function(xhr) {
+            console.error('Create failed:', xhr.responseText);
+            alert('Failed to create medical form: ' + (xhr.responseText || 'Unknown error'));
+        });
+    }
+
+    function collectFormData() {
+        const form = $('#questionnaire-form')[0];
+        const formData = new FormData(form);
+        const data = {};
+        
+        formData.forEach((value, key) => {
+            // Convert checkbox values to boolean
+            if (key === 'smokes' || key === 'drinksAlcohol' || key === 'exercises') {
+                data[key] = value === 'on';
+            } else if (key === 'height' || key === 'weight') {
+                data[key] = value ? parseFloat(value) : null;
+            } else {
+                data[key] = value || null;
+            }
+        });
+        
+        // Handle unchecked checkboxes
+        ['smokes', 'drinksAlcohol', 'exercises'].forEach(key => {
+            if (!(key in data)) {
+                data[key] = false;
+            }
+        });
+        
+        return data;
     }
     </script>
 </body>

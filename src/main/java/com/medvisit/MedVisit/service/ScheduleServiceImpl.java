@@ -5,10 +5,15 @@ import com.medvisit.MedVisit.entity.Employee;
 import com.medvisit.MedVisit.entity.Schedule;
 import com.medvisit.MedVisit.repository.EmployeeRepository;
 import com.medvisit.MedVisit.repository.ScheduleRepository;
-import com.medvisit.MedVisit.service.ScheduleService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.time.DayOfWeek;
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -24,6 +29,55 @@ public class ScheduleServiceImpl implements ScheduleService {
         Schedule schedule = new Schedule();
         copyDtoToEntity(dto, schedule);
         return toDto(scheduleRepository.save(schedule));
+    }
+
+    @Override
+    @Transactional
+    public List<ScheduleDto> createMonthlySchedule(Long employeeId, String startDate, String endDate,
+                                                    String startTime, String endTime, List<String> daysOfWeek) {
+        // Validate employee exists
+        Employee employee = employeeRepository.findById(employeeId)
+                .orElseThrow(() -> new RuntimeException("Employee not found with ID: " + employeeId));
+        
+        LocalDate start = LocalDate.parse(startDate);
+        LocalDate end = LocalDate.parse(endDate);
+        
+        // Parse days of week if provided (e.g., ["MONDAY", "WEDNESDAY", "FRIDAY"])
+        List<DayOfWeek> targetDays = null;
+        if (daysOfWeek != null && !daysOfWeek.isEmpty()) {
+            targetDays = daysOfWeek.stream()
+                    .map(DayOfWeek::valueOf)
+                    .collect(Collectors.toList());
+        }
+        
+        List<ScheduleDto> createdSchedules = new ArrayList<>();
+        LocalDate currentDate = start;
+        
+        while (!currentDate.isAfter(end)) {
+            // If specific days are provided, check if current day matches
+            boolean shouldCreate = (targetDays == null || targetDays.contains(currentDate.getDayOfWeek()));
+            
+            if (shouldCreate) {
+                // Check if schedule already exists for this date and employee
+                boolean exists = scheduleRepository.existsByEmployeeEmployeeIdAndDate(employeeId, currentDate);
+                
+                if (!exists) {
+                    Schedule schedule = new Schedule();
+                    schedule.setEmployee(employee);
+                    schedule.setDate(currentDate);
+                    schedule.setStartTime(LocalTime.parse(startTime));
+                    schedule.setEndTime(LocalTime.parse(endTime));
+                    
+                    Schedule saved = scheduleRepository.save(schedule);
+                    createdSchedules.add(toDto(saved));
+                }
+            }
+            
+            currentDate = currentDate.plusDays(1);
+        }
+        
+        System.out.println("Created " + createdSchedules.size() + " schedules for employee " + employeeId);
+        return createdSchedules;
     }
 
     @Override

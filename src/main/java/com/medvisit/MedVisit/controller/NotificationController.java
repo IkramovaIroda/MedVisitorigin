@@ -43,4 +43,9 @@ public class NotificationController {
     public void delete(@PathVariable Long id) {
         notificationService.delete(id);
     }
+    
+    @PostMapping("/send-to-patient")
+    public NotificationDto sendToPatient(@RequestBody NotificationDto dto) {
+        return notificationService.sendToPatient(dto);
+    }
 }

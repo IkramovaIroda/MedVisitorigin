@@ -6,6 +6,8 @@ import java.util.List;
 
 public interface ScheduleService {
     ScheduleDto create(ScheduleDto dto);
+    List<ScheduleDto> createMonthlySchedule(Long employeeId, String startDate, String endDate, 
+                                            String startTime, String endTime, List<String> daysOfWeek);
     ScheduleDto getById(Long id);
     List<ScheduleDto> getAll();
     ScheduleDto update(Long id, ScheduleDto dto);

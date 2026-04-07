@@ -14,4 +14,6 @@ public class NotificationDto {
     private String type;
     private LocalDateTime createdAt;
     private Long recipientId;
+    private Long senderId;
+    private Long visitId;
 }

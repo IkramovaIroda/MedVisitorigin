@@ -11,4 +11,6 @@ public interface NotificationService {
     List<NotificationDto> getByRecipient(Long recipientId);
     NotificationDto markAsRead(Long id);
     void delete(Long id);
+    
+    NotificationDto sendToPatient(NotificationDto dto);
 }

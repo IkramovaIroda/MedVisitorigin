@@ -56,6 +56,7 @@ public class ServiceServiceImpl implements ServiceService {
         service.setName(dto.getName());
         service.setDescription(dto.getDescription());
         service.setPrice(dto.getPrice());
+        service.setDuration(dto.getDuration());
         Clinic clinic = clinicRepository.findById(dto.getClinicId())
                 .orElseThrow(() -> new RuntimeException("Clinic not found"));
         service.setClinic(clinic);
@@ -67,6 +68,7 @@ public class ServiceServiceImpl implements ServiceService {
                 service.getName(),
                 service.getDescription(),
                 service.getPrice(),
+                service.getDuration(),
                 service.getClinic().getClinicId()
         );
     }

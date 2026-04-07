@@ -23,4 +23,12 @@ public class Employee {
     @ManyToOne
     @JoinColumn(name = "clinic_id")
     private Clinic clinic;
+
+    @ManyToMany
+    @JoinTable(
+        name = "employee_services",
+        joinColumns = @JoinColumn(name = "employee_id"),
+        inverseJoinColumns = @JoinColumn(name = "service_id")
+    )
+    private java.util.List<Service> services = new java.util.ArrayList<>();
 }
